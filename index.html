@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Patra Farm — Poultry Sales Ledger &amp; Monthly Statement</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- html2pdf.js CDN for A4 PDF Statement Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script>
+    function getEmbeddedLogoSvgDataUrl() {
+      const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+        <rect width="120" height="120" rx="24" fill="#ffffff"/>
+        <circle cx="60" cy="48" r="36" fill="#111827" stroke="#E5987E" stroke-width="4.5"/>
+        <path d="M46 25C51 16 64 16 69 25C74 28 75 35 70 40C64 37 53 37 47 40C43 35 42 29 46 25Z" fill="#E97E62"/>
+        <circle cx="64" cy="39" r="3" fill="#F3C6AE"/>
+        <path d="M70 40L81 44L70 48Z" fill="#F3C6AE"/>
+        <path d="M42 60C46 46 58 41 68 46C64 56 65 63 70 68C58 72 47 70 42 60Z" fill="#F3C6AE"/>
+        <rect x="24" y="65" width="72" height="16" rx="5" fill="#F3C6AE" stroke="#111827" stroke-width="2.5"/>
+        <text x="60" y="76.5" text-anchor="middle" font-size="10" font-weight="900" fill="#111827" font-family="Arial, sans-serif">ESTD 2023</text>
+        <text x="60" y="98" text-anchor="middle" font-size="16" font-weight="900" fill="#111827" font-family="Georgia, serif">PATRA</text>
+        <text x="60" y="112" text-anchor="middle" font-size="9.5" font-weight="700" fill="#C96A50" letter-spacing="4" font-family="Arial, sans-serif">FARM</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
+    }
+
+    function getEmbeddedSignatureSvgDataUrl() {
+      const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" width="260" height="64">
+        <rect width="260" height="64" fill="#ffffff"/>
+        <text x="130" y="42" text-anchor="middle" font-size="24" font-style="italic" font-weight="600" fill="#1e293b" font-family="Georgia, 'Times New Roman', serif">Amit Kumar Patra</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
+    }
+
+    function handleLogoLoadError(imgElem) {
+      if (imgElem) {
+        imgElem.onerror = null;
+        imgElem.src = getEmbeddedLogoSvgDataUrl();
+      }
+    }
+
+    function handleSignatureLoadError(imgElem) {
+      if (imgElem) {
+        imgElem.onerror = null;
+        imgElem.src = getEmbeddedSignatureSvgDataUrl();
+      }
+    }
+  </script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            cream: {
+              bg: '#F6F4EC',
+              surface: '#FCFBF7',
+              border: '#E7E3D7',
+            },
+            forest: {
+              DEFAULT: '#164A28',
+              hover: '#10381E',
+              light: '#EAF5EE',
+              accent: '#237A43'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      background-color: #F6F4EC;
+      color: #18181B;
+    }
+    .font-display {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .card-elevated {
+      background: #FFFFFF;
+      border: 1px solid rgba(226, 221, 208, 0.85);
+      box-shadow: 0 2px 10px -2px rgba(22, 74, 40, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    .card-elevated:hover {
+      box-shadow: 0 8px 24px -6px rgba(22, 74, 40, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F6F4EC;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D3CFC2;
+      border-radius: 999px;
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#F6F4EC] text-zinc-900 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-100 selection:text-emerald-950">
+
+  <!-- Notification Toast -->
+  <div id="toastNotification" class="fixed top-4 left-4 right-4 sm:left-auto sm:right-5 sm:max-w-sm z-50 transform transition-all duration-300 translate-y-[-140%] opacity-0 pointer-events-none">
+    <div class="flex items-center gap-3 px-4 py-3.5 bg-zinc-900/95 backdrop-blur-md text-white rounded-2xl shadow-2xl text-sm font-medium border border-zinc-700/80">
+      <span id="toastIcon" class="flex items-center justify-center flex-shrink-0"></span>
+      <span id="toastMessage" class="leading-snug">Action completed</span>
+    </div>
+  </div>
+
+  <!-- Top Header & Navigation Bar -->
+  <header class="bg-[#FCFBF7]/90 backdrop-blur-md border-b border-[#E7E3D7] sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3.5 pb-3">
+      
+      <!-- Top Row -->
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <div class="h-12 w-12 rounded-2xl bg-white border border-[#E2DDD0] p-1 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs ring-2 ring-[#164A28]/5">
+            <img
+              id="headerFarmLogo"
+              src="Screenshot_2026-11-05_at_9.12.11_AM-removebg-preview_3.png"
+              alt="Patra Farm Logo"
+              class="w-full h-full object-contain"
+              onerror="handleLogoLoadError(this)"
+            >
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <h1 class="font-display text-lg sm:text-xl font-extrabold tracking-tight text-zinc-900 leading-none truncate">Patra Farm</h1>
+              <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7]">ESTD 2023</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-zinc-500 font-medium truncate mt-1">Poultry Sales Ledger &amp; Monthly Statement</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3.5 flex-shrink-0">
+          <div class="hidden sm:flex flex-col items-end pr-1">
+            <span id="currentDateDisplay" class="text-xs font-semibold text-zinc-700">Wed, 18 Nov, 2026</span>
+            <span id="cloudSyncIndicator" class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1.5 mt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> All Phones Synced
+            </span>
+          </div>
+
+          <button onclick="openSettingsModal()" title="Farm Branding & Data Settings" aria-label="Settings" class="min-w-[42px] min-h-[42px] flex items-center justify-center rounded-xl border border-[#E2DDD0] bg-white hover:bg-[#F6F4EC] text-zinc-600 hover:text-zinc-900 transition active:scale-95 shadow-2xs">
+            <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+          </button>
+
+          <button onclick="focusNewEntry()" class="min-h-[42px] px-4 py-2 bg-gradient-to-b from-[#1A562F] to-[#134123] hover:from-[#154827] hover:to-[#0E331B] text-white font-semibold text-xs sm:text-sm rounded-xl shadow-sm shadow-[#164A28]/20 transition active:scale-95 flex items-center gap-1.5 whitespace-nowrap">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>New Sale</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Desktop Segmented Navigation Row -->
+      <nav class="hidden md:flex items-center gap-1.5 mt-3.5 p-1 bg-[#EFECE2]/80 rounded-2xl w-fit border border-[#E4E0D3]">
+        <button id="tabDashboardBtn" onclick="switchTab('dashboard')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-[#164A28] shadow-xs flex items-center gap-2 transition">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </button>
+        <button id="tabKhataBtn" onclick="switchTab('khata')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 flex items-center gap-2 transition">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Khata</span>
+        </button>
+        <button id="tabInventoryBtn" onclick="switchTab('inventory')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 flex items-center gap-2 transition">
+          <i data-lucide="egg" class="w-4 h-4"></i>
+          <span>Inventory</span>
+        </button>
+        <button id="tabStatementBtn" onclick="switchTab('statement')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 flex items-center gap-2 transition">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Statement</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24 md:pb-12 flex-1 w-full">
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: DASHBOARD ("Today's Ledger")                                  -->
+    <!-- ===================================================================== -->
+    <div id="viewDashboard" class="space-y-6">
+      
+      <!-- Section Heading & Quick Jump -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <div>
+          <h2 class="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-zinc-900">Today's Ledger</h2>
+          <p class="text-xs sm:text-sm text-zinc-500 mt-0.5">Live bird dispatch count &amp; farm stock overview</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E2DDD0] text-zinc-600 font-medium shadow-2xs">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#164A28]"></i>
+            <span>Egra, Purba Medinipur</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Featured Hero Summary Card: BIRDS SOLD + Live Stock Pill -->
+      <div class="card-elevated rounded-3xl p-5 sm:p-7 relative overflow-hidden transition-all">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">BIRDS SOLD</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200/70">Cumulative</span>
+            </div>
+            <div class="mt-2.5 flex items-baseline gap-2">
+              <span id="dashBirdsSold" class="font-display text-4xl sm:text-5xl font-extrabold text-[#006BA6] tracking-tight tabular-nums">1,097</span>
+              <span class="text-sm sm:text-base font-semibold text-zinc-500">pcs</span>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2.5 text-xs text-zinc-500">
+              <span>Across all customer entries</span>
+              <span class="text-zinc-300">•</span>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAF5EE] text-[#164A28] font-bold">
+                <i data-lucide="warehouse" class="w-3.5 h-3.5"></i>
+                Live Stock: <span id="dashLiveStockInline" class="tabular-nums">1,100 pcs</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-50 to-emerald-50 border border-sky-100 text-[#006BA6] items-center justify-center flex-shrink-0">
+            <i data-lucide="feather" class="w-7 h-7"></i>
+          </div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#006BA6] via-emerald-500 to-[#164A28]"></div>
+      </div>
+
+      <!-- Bottom Split Grid: Left "New Entry" Form | Right "Recent Sales" -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left 5 Cols: New Entry Form -->
+        <div class="lg:col-span-5 card-elevated rounded-3xl p-5 sm:p-6 transition-all">
+          <div class="flex items-start justify-between mb-5">
+            <div>
+              <h3 class="font-display text-lg font-extrabold text-zinc-900">New Entry</h3>
+              <p class="text-xs text-zinc-500 mt-0.5">Record customer name &amp; bird count</p>
+            </div>
+            <button type="button" onclick="resetNewEntryForm()" title="Reset Form" class="p-2 text-zinc-400 hover:text-zinc-800 rounded-xl hover:bg-[#F6F4EC] transition">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <form id="newSaleForm" onsubmit="handleSaveSale(event)" class="space-y-4">
+            
+            <!-- Customer Name & Date -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">CUSTOMER NAME</label>
+                <input type="text" id="saleCustomerInput" required list="customerSuggestions" placeholder="e.g. Dulal / Goutam" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none transition">
+                <datalist id="customerSuggestions"></datalist>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">DATE</label>
+                <input type="date" id="saleDateInput" required class="w-full min-h-[44px] px-3.5 py-2 bg-white border border-[#E2DDD0] rounded-xl text-sm font-semibold text-zinc-900 focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none transition">
+              </div>
+            </div>
+
+            <!-- SALE DETAILS Box with Quick Quantity Chips -->
+            <div class="p-4 rounded-2xl bg-[#FAF9F5] border border-[#E7E3D7] space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-500">BIRDS (PCS)</span>
+                <div class="flex items-center gap-1">
+                  <button type="button" onclick="addQuickPcs(25)" class="px-2 py-0.5 text-[11px] font-bold rounded-lg bg-white border border-[#E2DDD0] text-zinc-600 hover:border-[#164A28] hover:text-[#164A28] transition">+25</button>
+                  <button type="button" onclick="addQuickPcs(50)" class="px-2 py-0.5 text-[11px] font-bold rounded-lg bg-white border border-[#E2DDD0] text-zinc-600 hover:border-[#164A28] hover:text-[#164A28] transition">+50</button>
+                  <button type="button" onclick="addQuickPcs(100)" class="px-2 py-0.5 text-[11px] font-bold rounded-lg bg-white border border-[#E2DDD0] text-zinc-600 hover:border-[#164A28] hover:text-[#164A28] transition">+100</button>
+                </div>
+              </div>
+              <input type="number" id="salePcsInput" required min="1" step="1" placeholder="Enter bird count (e.g. 50)" class="w-full min-h-[46px] px-3.5 py-2 bg-white border border-[#E2DDD0] rounded-xl text-base font-extrabold text-zinc-900 tabular-nums placeholder:text-zinc-300 placeholder:font-normal focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none transition">
+            </div>
+
+            <!-- NOTE / PHONE -->
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">NOTE / PHONE</label>
+              <input type="text" id="saleNoteInput" placeholder="Optional phone or batch note" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] outline-none transition">
+            </div>
+
+            <!-- Save to Ledger Button -->
+            <button type="submit" class="w-full min-h-[48px] py-3 bg-gradient-to-b from-[#1A562F] to-[#134123] hover:from-[#154827] hover:to-[#0E331B] text-white font-bold text-sm rounded-xl shadow-md shadow-[#164A28]/15 transition active:scale-[0.99] flex items-center justify-center gap-2">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              <span>Save to Ledger</span>
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Right 7 Cols: Recent Sales Card -->
+        <div class="lg:col-span-7 card-elevated rounded-3xl p-5 sm:p-6 transition-all">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h3 class="font-display text-lg font-extrabold text-zinc-900">Recent Sales</h3>
+              <p class="text-xs text-zinc-500 mt-0.5">Latest bird dispatches across your farm</p>
+            </div>
+            <button onclick="switchTab('khata')" class="px-3 py-1.5 rounded-xl bg-[#EAF5EE] hover:bg-[#DCF0E3] text-xs font-bold text-[#164A28] flex items-center gap-1 transition">
+              <span>All ledger</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <div id="recentSalesList" class="divide-y divide-zinc-100">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: KHATA ("Customer Ledger")                                     -->
+    <!-- ===================================================================== -->
+    <div id="viewKhata" class="hidden space-y-5">
+      
+      <!-- Top Header + Filter Pills -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-zinc-900">Customer Ledger</h2>
+          <p id="khataSummarySubtitle" class="text-xs sm:text-sm text-zinc-500 mt-0.5">12 entries • 1,097 pcs</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="khataFilterAll" onclick="setKhataFilter('all')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-bold bg-[#164A28] text-white shadow-2xs transition">All</button>
+          <button id="khataFilterToday" onclick="setKhataFilter('today')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-zinc-600 border border-[#E2DDD0] hover:bg-[#FAF9F5] transition">Today</button>
+          <button id="khataFilterMonth" onclick="setKhataFilter('month')" class="min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-zinc-600 border border-[#E2DDD0] hover:bg-[#FAF9F5] transition">This month</button>
+        </div>
+      </div>
+
+      <!-- Search Input Bar -->
+      <div class="relative">
+        <span class="absolute left-4 top-3.5 text-zinc-400">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </span>
+        <input type="text" id="khataSearchInput" oninput="renderKhataTable()" placeholder="Search by customer name or note..." class="w-full min-h-[46px] pl-11 pr-4 py-2.5 bg-white border border-[#E2DDD0] rounded-2xl text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none shadow-2xs transition">
+      </div>
+
+      <!-- Khata Table Card -->
+      <div class="card-elevated rounded-3xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[#FAF9F5] border-b border-[#ECE9DF] text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                <th class="py-3.5 px-4 sm:px-6">DATE</th>
+                <th class="py-3.5 px-4">CUSTOMER</th>
+                <th class="py-3.5 px-4 text-center">PCS</th>
+                <th class="py-3.5 px-4 sm:px-6 text-right">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="khataTableBody" class="divide-y divide-zinc-100 text-xs sm:text-sm">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 3: INVENTORY ("Bird Inventory")                                  -->
+    <!-- ===================================================================== -->
+    <div id="viewInventory" class="hidden space-y-6">
+      
+      <!-- Section Heading -->
+      <div>
+        <h2 class="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-zinc-900">Bird Inventory</h2>
+        <p class="text-xs sm:text-sm text-zinc-500 mt-0.5">Track live bird batches, stock counts and batch status.</p>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+        <div class="card-elevated rounded-2xl p-4 sm:p-5">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">CURRENT STOCK</span>
+          <div class="mt-2 flex items-baseline gap-1">
+            <span id="invCurrentStock" class="font-display text-2xl sm:text-3xl font-extrabold text-[#1B7A43] tabular-nums">1,100</span>
+            <span class="text-xs font-semibold text-zinc-500">pcs</span>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-4 sm:p-5">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">ACTIVE BATCHES</span>
+          <div class="mt-2">
+            <span id="invActiveBatches" class="font-display text-2xl sm:text-3xl font-extrabold text-zinc-900 tabular-nums">1</span>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-4 sm:p-5">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">TOTAL BATCHES</span>
+          <div class="mt-2">
+            <span id="invTotalBatches" class="font-display text-2xl sm:text-3xl font-extrabold text-zinc-900 tabular-nums">1</span>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-4 sm:p-5">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">SOLD (PCS)</span>
+          <div class="mt-2">
+            <span id="invSoldPcs" class="font-display text-2xl sm:text-3xl font-extrabold text-[#006BA6] tabular-nums">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Bird Batch Card -->
+      <div class="card-elevated rounded-3xl p-5 sm:p-6">
+        <div class="flex items-start justify-between mb-5">
+          <div>
+            <h3 class="font-display text-lg font-extrabold text-zinc-900">Add Bird Batch</h3>
+            <p class="text-xs text-zinc-500 mt-0.5">Record a new stock batch with quantity and date</p>
+          </div>
+          <button type="button" onclick="resetBatchForm()" title="Reset Form" class="p-2 text-zinc-400 hover:text-zinc-800 rounded-xl hover:bg-[#F6F4EC] transition">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <form id="addBatchForm" onsubmit="handleSaveBatch(event)" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">BATCH / BREED</label>
+              <input type="text" id="batchNameInput" required placeholder="e.g. Batch 1 / Cobb Broiler" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] outline-none transition">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">BIRDS (PCS)</label>
+              <input type="number" id="batchPcsInput" required min="1" step="1" placeholder="200" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-bold text-zinc-900 tabular-nums placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] outline-none transition">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">DATE ADDED</label>
+              <input type="date" id="batchDateInput" required class="w-full min-h-[44px] px-3.5 py-2 bg-white border border-[#E2DDD0] rounded-xl text-sm font-medium text-zinc-900 focus:border-[#164A28] outline-none transition">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">STATUS</label>
+              <select id="batchStatusInput" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-semibold text-zinc-900 focus:bg-white focus:border-[#164A28] outline-none transition">
+                <option value="Active">Active</option>
+                <option value="Sold Out">Sold Out</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">NOTE</label>
+            <input type="text" id="batchNoteInput" placeholder="Optional hatchery or shed note" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] outline-none transition">
+          </div>
+
+          <button type="submit" class="w-full min-h-[48px] py-3 bg-gradient-to-b from-[#1A562F] to-[#134123] hover:from-[#154827] hover:to-[#0E331B] text-white font-bold text-sm rounded-xl shadow-md shadow-[#164A28]/15 transition active:scale-[0.99] flex items-center justify-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            <span>Save Batch</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Stock Batches Table Card -->
+      <div class="card-elevated rounded-3xl p-5 sm:p-6">
+        <div class="mb-4">
+          <h3 class="font-display text-lg font-extrabold text-zinc-900">Stock Batches</h3>
+          <p id="stockBatchesCountText" class="text-xs text-zinc-500 mt-0.5">1 batch(es) recorded</p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-100 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                <th class="py-3 pr-4">BATCH / BREED</th>
+                <th class="py-3 px-4">BIRDS</th>
+                <th class="py-3 px-4">DATE ADDED</th>
+                <th class="py-3 px-4">NOTE</th>
+                <th class="py-3 px-4">STATUS</th>
+                <th class="py-3 pl-4 text-right">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody id="stockBatchesTableBody" class="divide-y divide-zinc-100 text-xs sm:text-sm">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 4: STATEMENT ("Monthly Statement" & PDF Download)                -->
+    <!-- ===================================================================== -->
+    <div id="viewStatement" class="hidden space-y-5">
+      
+      <!-- Section Heading -->
+      <div>
+        <h2 class="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-zinc-900">Monthly Statement</h2>
+        <p class="text-xs sm:text-sm text-zinc-500 mt-0.5">Customer-wise bird summary and official A4 PDF export</p>
+      </div>
+
+      <!-- Month / Year Controls & Download Statement (PDF) Button -->
+      <div class="card-elevated rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-end justify-between gap-4 no-print">
+        <div class="grid grid-cols-2 sm:flex items-center gap-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">MONTH</label>
+            <select id="statementMonthSelect" onchange="generateMonthlyReport()" class="min-w-[155px] w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-bold text-zinc-900 focus:border-[#164A28] outline-none">
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9">October</option>
+              <option value="10" selected>November</option>
+              <option value="11">December</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5">YEAR</label>
+            <select id="statementYearSelect" onchange="generateMonthlyReport()" class="min-w-[125px] w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-bold text-zinc-900 focus:border-[#164A28] outline-none">
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="downloadPdfBtn" onclick="downloadSettlementPDF()" class="min-h-[44px] px-5 py-2.5 bg-gradient-to-b from-[#1A562F] to-[#134123] hover:from-[#154827] hover:to-[#0E331B] text-white font-bold text-xs sm:text-sm rounded-xl shadow-sm transition active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Download Statement (PDF)</span>
+        </button>
+      </div>
+
+      <!-- Paper Preview Wrapper -->
+      <div class="bg-[#E8E4D8]/80 rounded-3xl p-3 sm:p-8 overflow-x-auto border border-[#DFDBD0]">
+        <div id="settlement-pdf-area" class="bg-white rounded-2xl shadow-lg p-6 sm:p-10 w-full min-w-[680px] max-w-[780px] mx-auto flex flex-col justify-between min-h-[960px]">
+          
+          <div>
+            <!-- Letterhead -->
+            <div class="flex items-start justify-between border-b-2 border-[#164A28] pb-4 mb-5">
+              <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center flex-shrink-0 overflow-hidden p-0.5">
+                  <img
+                    id="pdfFarmLogo"
+                    src="Screenshot_2026-11-05_at_9.12.11_AM-removebg-preview_3.png"
+                    alt="Patra Farm Logo"
+                    class="w-full h-full object-contain"
+                    onerror="handleLogoLoadError(this)"
+                  >
+                </div>
+                <div>
+                  <h2 class="text-xl font-black text-zinc-900 tracking-tight leading-none">PATRA FARM</h2>
+                  <p class="text-[10px] font-bold text-[#1B7A43] uppercase tracking-wider mt-1">WHOLESALE &amp; RETAIL POULTRY SUPPLIES</p>
+                  <p class="text-[10px] text-zinc-500 mt-1">Urdhabpur, Egra, Purba Medinipur, 721422 • Contact: +91 7074529365</p>
+                </div>
+              </div>
+
+              <div class="text-right">
+                <span class="inline-block bg-zinc-900 text-white text-[9px] font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">MONTHLY STATEMENT</span>
+                <p id="statementPeriodTitle" class="text-sm font-extrabold text-zinc-900 mt-1.5">November 2026</p>
+                <p class="text-[10px] text-zinc-400 mt-0.5">Generated: <span id="statementGenDate">18 Nov 2026</span></p>
+              </div>
+            </div>
+
+            <!-- Single Summary Box: BIRDS (PCS) -->
+            <div class="border border-zinc-200 rounded-xl p-3.5 mb-5 text-center bg-[#FAF9F5]">
+              <span class="block text-[9px] font-bold uppercase tracking-wider text-zinc-400">BIRDS (PCS)</span>
+              <span id="pdfBirdsPcs" class="block text-xl font-black text-zinc-900 mt-0.5 tabular-nums">1,097</span>
+            </div>
+
+            <!-- CUSTOMER SETTLEMENT BREAKDOWN -->
+            <div class="mb-6">
+              <h4 class="text-[10px] font-extrabold text-zinc-700 uppercase tracking-wider mb-2">CUSTOMER SETTLEMENT BREAKDOWN</h4>
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-zinc-100/80 text-zinc-500 text-[9px] font-bold uppercase tracking-wider border-y border-zinc-200">
+                    <th class="py-2 px-2.5">CUSTOMER</th>
+                    <th class="py-2 px-2 text-center">ENTRIES</th>
+                    <th class="py-2 px-2.5 text-right">PCS</th>
+                  </tr>
+                </thead>
+                <tbody id="pdfCustomerBreakdownBody" class="divide-y divide-zinc-100 text-[11px]">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- ALL TRANSACTIONS -->
+            <div>
+              <h4 class="text-[10px] font-extrabold text-zinc-700 uppercase tracking-wider mb-2">ALL TRANSACTIONS</h4>
+              <table class="w-full text-left text-[11px] border-collapse">
+                <thead>
+                  <tr class="text-zinc-400 text-[9px] font-bold uppercase tracking-wider border-b border-zinc-200">
+                    <th class="py-2 px-2">DATE</th>
+                    <th class="py-2 px-2">CUSTOMER</th>
+                    <th class="py-2 px-2 text-right">PCS</th>
+                  </tr>
+                </thead>
+                <tbody id="pdfAllTransactionsBody" class="divide-y divide-zinc-100 text-[11px]">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Footer & Authorized Signatory -->
+          <div class="pt-8 mt-8 border-t border-zinc-200 flex items-end justify-between text-xs">
+            <div>
+              <p class="font-bold text-zinc-900">Patra Farm</p>
+              <p class="text-[10px] text-zinc-400 mt-0.5">Thank you! For inquiries call +91 7074529365 • patrafarm2023@gmail.com</p>
+            </div>
+            <div class="text-right flex flex-col items-end">
+              <div class="h-10 w-44 flex items-end justify-center mb-1 overflow-hidden">
+                <img
+                  id="pdfAuthorizedSignature"
+                  src="WhatsApp Image 2026-01-17 at 01.21.51.jpeg"
+                  alt="Amit Kumar Patra Signature"
+                  class="max-h-9 max-w-full object-contain mix-blend-multiply contrast-125"
+                  onerror="handleSignatureLoadError(this)"
+                >
+              </div>
+              <div class="border-b border-zinc-400 w-44 mb-1"></div>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-zinc-500">AUTHORIZED SIGNATORY</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar (< md) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#FCFBF7]/95 backdrop-blur-md border-t border-[#E7E3D7] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+    <div class="grid grid-cols-4 h-16">
+      <button id="mobileTabDashboardBtn" onclick="switchTab('dashboard')" class="flex flex-col items-center justify-center gap-1 text-[#164A28] font-bold text-[11px]">
+        <i data-lucide="layout-grid" class="w-5 h-5"></i>
+        <span>Dashboard</span>
+      </button>
+      <button id="mobileTabKhataBtn" onclick="switchTab('khata')" class="flex flex-col items-center justify-center gap-1 text-zinc-500 font-medium text-[11px]">
+        <i data-lucide="book-open" class="w-5 h-5"></i>
+        <span>Khata</span>
+      </button>
+      <button id="mobileTabInventoryBtn" onclick="switchTab('inventory')" class="flex flex-col items-center justify-center gap-1 text-zinc-500 font-medium text-[11px]">
+        <i data-lucide="egg" class="w-5 h-5"></i>
+        <span>Inventory</span>
+      </button>
+      <button id="mobileTabStatementBtn" onclick="switchTab('statement')" class="flex flex-col items-center justify-center gap-1 text-zinc-500 font-medium text-[11px]">
+        <i data-lucide="file-text" class="w-5 h-5"></i>
+        <span>Statement</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Settings, Logo, Signature & Default Data Modal -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs hidden items-end sm:items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-3xl w-[96%] max-w-md p-5 sm:p-6 shadow-2xl border border-zinc-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-zinc-100">
+        <h3 class="font-display font-extrabold text-zinc-900 text-base flex items-center gap-2">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4 text-[#164A28]"></i>
+          <span>Farm Branding &amp; Data Settings</span>
+        </h3>
+        <button onclick="closeSettingsModal()" aria-label="Close" class="min-w-[40px] min-h-[40px] flex items-center justify-center text-zinc-400 hover:text-zinc-700 rounded-xl hover:bg-zinc-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Logo Upload -->
+      <div class="p-3.5 bg-[#FAF9F5] rounded-2xl border border-[#ECE9DF] mb-3 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-zinc-800">Farm Brand Logo</span>
+          <span class="text-[11px] text-zinc-400">Synced across devices</span>
+        </div>
+        <input type="file" id="customLogoFileInput" accept="image/*" onchange="handleCustomLogoUpload(event)" class="hidden">
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="document.getElementById('customLogoFileInput').click()" class="min-h-[40px] px-3 py-2 text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xl transition flex items-center justify-center gap-1.5">
+            <i data-lucide="image-plus" class="w-3.5 h-3.5 text-[#164A28]"></i>
+            <span>Change Logo</span>
+          </button>
+          <button type="button" onclick="resetToDefaultLogo()" class="min-h-[40px] px-3 py-2 text-xs font-semibold text-zinc-600 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xl transition flex items-center justify-center gap-1.5">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Default Logo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Signature Upload -->
+      <div class="p-3.5 bg-[#FAF9F5] rounded-2xl border border-[#ECE9DF] mb-4 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-zinc-800">Authorized Signature</span>
+          <span class="text-[11px] text-zinc-400">Amit Kumar Patra</span>
+        </div>
+        <input type="file" id="customSignatureFileInput" accept="image/*" onchange="handleCustomSignatureUpload(event)" class="hidden">
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="document.getElementById('customSignatureFileInput').click()" class="min-h-[40px] px-3 py-2 text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xl transition flex items-center justify-center gap-1.5">
+            <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-[#164A28]"></i>
+            <span>Change Signature</span>
+          </button>
+          <button type="button" onclick="resetToDefaultSignature()" class="min-h-[40px] px-3 py-2 text-xs font-semibold text-zinc-600 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-xl transition flex items-center justify-center gap-1.5">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Default Signature</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Default Data Controls -->
+      <div class="space-y-2.5">
+        <button onclick="saveCurrentAsDefaultData()" class="w-full min-h-[44px] py-2.5 text-xs sm:text-sm font-bold text-white bg-[#164A28] hover:bg-[#10381E] rounded-xl transition flex items-center justify-center gap-2">
+          <i data-lucide="bookmark-check" class="w-4 h-4"></i>
+          <span>Save Current Data as Default</span>
+        </button>
+        <button onclick="restoreSavedDefaultData()" class="w-full min-h-[44px] py-2.5 text-xs sm:text-sm font-semibold text-[#164A28] bg-[#EAF5EE] hover:bg-[#DCF0E3] border border-[#CFE8D7] rounded-xl transition">
+          Restore Saved Default Data
+        </button>
+        <button onclick="clearAllRecords()" class="w-full min-h-[44px] py-2.5 text-xs sm:text-sm font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition">
+          Clear All Records
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Device Real-Time Sync Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'patra-farm-default-id';
+    let firebaseConfig = null;
+    try {
+      if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        firebaseConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
+      }
+    } catch (e) {}
+
+    let db = null;
+    let currentUser = null;
+    let isCloudReady = false;
+    let seededSales = false;
+    let seededBatches = false;
+
+    function setSyncBadge(label, live) {
+      const el = document.getElementById('cloudSyncIndicator');
+      if (!el) return;
+      el.className = live
+        ? 'text-[10px] text-emerald-700 font-semibold flex items-center gap-1.5 mt-0.5'
+        : 'text-[10px] text-amber-600 font-semibold flex items-center gap-1.5 mt-0.5';
+      el.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${live ? 'bg-emerald-600 animate-pulse' : 'bg-amber-500'}"></span> ${label}`;
+    }
+
+    async function initSync() {
+      if (!firebaseConfig) {
+        setSyncBadge('Local Device Synced', true);
+        return;
+      }
+      try {
+        setSyncBadge('Connecting Devices...', false);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        const auth = getAuth(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          const cred = await signInWithCustomToken(auth, __initial_auth_token);
+          currentUser = cred.user;
+        } else {
+          const cred = await signInAnonymously(auth);
+          currentUser = cred.user;
+        }
+        if (!currentUser) return;
+        isCloudReady = true;
+        setSyncBadge('All Phones Live Synced', true);
+
+        const salesCol = collection(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2');
+        onSnapshot(salesCol, async (snap) => {
+          if (snap.empty && !seededSales) {
+            seededSales = true;
+            const localSales = window.getSalesList ? window.getSalesList() : [];
+            for (const item of localSales) {
+              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', item.id), { ...item, updatedAt: Date.now() });
+            }
+            return;
+          }
+          seededSales = true;
+          const items = [];
+          snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+          items.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
+          if (window.onCloudSalesUpdate) window.onCloudSalesUpdate(items);
+        });
+
+        const batchesCol = collection(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2');
+        onSnapshot(batchesCol, async (snap) => {
+          if (snap.empty && !seededBatches) {
+            seededBatches = true;
+            const localBatches = window.getBatchesList ? window.getBatchesList() : [];
+            for (const b of localBatches) {
+              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', b.id), { ...b, updatedAt: Date.now() });
+            }
+            return;
+          }
+          seededBatches = true;
+          const items = [];
+          snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+          items.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
+          if (window.onCloudBatchesUpdate) window.onCloudBatchesUpdate(items);
+        });
+
+        const brandingRef = doc(db, 'artifacts', appId, 'public', 'data', 'patra_settings', 'branding_v2');
+        onSnapshot(brandingRef, (snap) => {
+          if (snap.exists() && window.onCloudBrandingUpdate) {
+            window.onCloudBrandingUpdate(snap.data());
+          }
+        });
+      } catch (err) {
+        console.error('Sync init error:', err);
+        setSyncBadge('Local Device Synced', true);
+      }
+    }
+
+    window.cloudBridge = {
+      async saveSale(record) {
+        if (!isCloudReady || !db) return;
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', record.id), { ...record, updatedAt: Date.now() });
+      },
+      async deleteSale(id) {
+        if (!isCloudReady || !db) return;
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', id));
+      },
+      async saveBatch(record) {
+        if (!isCloudReady || !db) return;
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', record.id), { ...record, updatedAt: Date.now() });
+      },
+      async deleteBatch(id) {
+        if (!isCloudReady || !db) return;
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', id));
+      },
+      async saveBranding(logo, signature) {
+        if (!isCloudReady || !db) return;
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_settings', 'branding_v2'), {
+          logo: logo || '',
+          signature: signature || '',
+          updatedAt: Date.now()
+        }, { merge: true });
+      }
+    };
+
+    initSync();
+  </script>
+
+  <!-- Core Application Logic -->
+  <script>
+    const SALES_KEY = 'patra_farm_sales_v10';
+    const BATCHES_KEY = 'patra_farm_batches_v10';
+    const DEFAULT_SALES_KEY = 'patra_farm_default_sales_v10';
+    const DEFAULT_BATCHES_KEY = 'patra_farm_default_batches_v10';
+    const LOGO_KEY = 'patra_farm_custom_logo_v9';
+    const SIGNATURE_KEY = 'patra_farm_custom_signature_v9';
+    const DEFAULT_LOGO_SRC = 'Screenshot_2026-11-05_at_9.12.11_AM-removebg-preview_3.png';
+    const DEFAULT_SIGNATURE_SRC = 'WhatsApp Image 2026-01-17 at 01.21.51.jpeg';
+
+    const initialSampleSales = [
+      { id: 's-1', date: '2026-11-13', customer: 'Unknown', pieces: 70, note: '' },
+      { id: 's-2', date: '2026-11-08', customer: 'Unknown', pieces: 34, note: '' },
+      { id: 's-3', date: '2026-11-08', customer: 'Unknown', pieces: 41, note: '' },
+      { id: 's-4', date: '2026-11-08', customer: 'Goutam', pieces: 56, note: '' },
+      { id: 's-5', date: '2026-11-07', customer: 'Dulal', pieces: 157, note: '' },
+      { id: 's-6', date: '2026-11-07', customer: 'Goutam', pieces: 101, note: '' },
+      { id: 's-7', date: '2026-11-06', customer: 'Rabin Patra', pieces: 100, note: '' },
+      { id: 's-8', date: '2026-11-06', customer: 'Kalipada', pieces: 81, note: '' },
+      { id: 's-9', date: '2026-11-06', customer: 'Goutam', pieces: 122, note: '' },
+      { id: 's-10', date: '2026-11-05', customer: 'Goutam', pieces: 101, note: '' },
+      { id: 's-11', date: '2026-11-05', customer: 'Dulal', pieces: 83, note: '' },
+      { id: 's-12', date: '2026-11-04', customer: 'Dulal', pieces: 151, note: '' }
+    ];
+
+    const initialSampleBatches = [
+      { id: 'b-1', name: 'KEGGFARMS PVT. LTD', pieces: 1100, date: '2026-10-30', status: 'Active', note: '' }
+    ];
+
+    let salesRecords = [];
+    let batchRecords = [];
+    let currentKhataFilter = 'all';
+
+    function getDefaultSales() {
+      try {
+        const saved = localStorage.getItem(DEFAULT_SALES_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(initialSampleSales));
+    }
+
+    function getDefaultBatches() {
+      try {
+        const saved = localStorage.getItem(DEFAULT_BATCHES_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(initialSampleBatches));
+    }
+
+    try {
+      const rawSales = localStorage.getItem(SALES_KEY);
+      salesRecords = rawSales ? JSON.parse(rawSales) : getDefaultSales();
+    } catch (e) {
+      salesRecords = getDefaultSales();
+    }
+
+    try {
+      const rawBatches = localStorage.getItem(BATCHES_KEY);
+      batchRecords = rawBatches ? JSON.parse(rawBatches) : getDefaultBatches();
+    } catch (e) {
+      batchRecords = getDefaultBatches();
+    }
+
+    function persistLocal() {
+      try {
+        localStorage.setItem(SALES_KEY, JSON.stringify(salesRecords));
+        localStorage.setItem(BATCHES_KEY, JSON.stringify(batchRecords));
+      } catch (e) {}
+    }
+
+    function formatDisplayDate(isoDate) {
+      if (!isoDate) return '-';
+      const parts = isoDate.split('-');
+      if (parts.length !== 3) return isoDate;
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const day = parts[2];
+      const month = months[parseInt(parts[1], 10) - 1] || parts[1];
+      return `${day} ${month} ${parts[0]}`;
+    }
+
+    function getInitials(name) {
+      const clean = (name || 'U').trim();
+      const parts = clean.split(/\s+/);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return clean.slice(0, 2).toUpperCase();
+    }
+
+    function addQuickPcs(delta) {
+      const input = document.getElementById('salePcsInput');
+      if (!input) return;
+      const current = parseInt(input.value, 10) || 0;
+      input.value = current + delta;
+      input.focus();
+    }
+
+    function applyBrandingAssets() {
+      let logoSrc = DEFAULT_LOGO_SRC;
+      let sigSrc = DEFAULT_SIGNATURE_SRC;
+      try {
+        const customLogo = localStorage.getItem(LOGO_KEY);
+        if (customLogo) logoSrc = customLogo;
+        const customSig = localStorage.getItem(SIGNATURE_KEY);
+        if (customSig) sigSrc = customSig;
+      } catch (e) {}
+
+      const hLogo = document.getElementById('headerFarmLogo');
+      const pLogo = document.getElementById('pdfFarmLogo');
+      const pSig = document.getElementById('pdfAuthorizedSignature');
+      if (hLogo) hLogo.src = logoSrc;
+      if (pLogo) pLogo.src = logoSrc;
+      if (pSig) pSig.src = sigSrc;
+    }
+
+    function compressImageDataUrl(dataUrl, maxDim, quality) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = function() {
+          let w = img.naturalWidth || maxDim;
+          let h = img.naturalHeight || maxDim;
+          if (w > maxDim || h > maxDim) {
+            if (w >= h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+      });
+    }
+
+    function handleCustomLogoUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const compressed = await compressImageDataUrl(e.target.result, 320, 0.85);
+        localStorage.setItem(LOGO_KEY, compressed);
+        applyBrandingAssets();
+        if (window.cloudBridge) {
+          window.cloudBridge.saveBranding(compressed, localStorage.getItem(SIGNATURE_KEY) || '');
+        }
+        showToast('Farm logo updated & synced across all phones!');
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    function resetToDefaultLogo() {
+      localStorage.removeItem(LOGO_KEY);
+      applyBrandingAssets();
+      if (window.cloudBridge) {
+        window.cloudBridge.saveBranding('', localStorage.getItem(SIGNATURE_KEY) || '');
+      }
+      showToast('Restored default Patra Farm logo.');
+    }
+
+    function handleCustomSignatureUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const compressed = await compressImageDataUrl(e.target.result, 360, 0.85);
+        localStorage.setItem(SIGNATURE_KEY, compressed);
+        applyBrandingAssets();
+        if (window.cloudBridge) {
+          window.cloudBridge.saveBranding(localStorage.getItem(LOGO_KEY) || '', compressed);
+        }
+        showToast('Authorized signature updated & synced!');
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    function resetToDefaultSignature() {
+      localStorage.removeItem(SIGNATURE_KEY);
+      applyBrandingAssets();
+      if (window.cloudBridge) {
+        window.cloudBridge.saveBranding(localStorage.getItem(LOGO_KEY) || '', '');
+      }
+      showToast('Restored default signature.');
+    }
+
+    window.getSalesList = () => salesRecords;
+    window.getBatchesList = () => batchRecords;
+
+    window.onCloudSalesUpdate = function(liveList) {
+      salesRecords = liveList;
+      persistLocal();
+      refreshAllViews();
+    };
+
+    window.onCloudBatchesUpdate = function(liveList) {
+      batchRecords = liveList;
+      persistLocal();
+      refreshAllViews();
+    };
+
+    window.onCloudBrandingUpdate = function(data) {
+      if (!data) return;
+      if (data.logo) localStorage.setItem(LOGO_KEY, data.logo);
+      else localStorage.removeItem(LOGO_KEY);
+      if (data.signature) localStorage.setItem(SIGNATURE_KEY, data.signature);
+      else localStorage.removeItem(SIGNATURE_KEY);
+      applyBrandingAssets();
+    };
+
+    function handleSaveSale(e) {
+      e.preventDefault();
+      const customer = document.getElementById('saleCustomerInput').value.trim() || 'Unknown';
+      const date = document.getElementById('saleDateInput').value;
+      const pieces = parseInt(document.getElementById('salePcsInput').value, 10) || 0;
+      const note = document.getElementById('saleNoteInput').value.trim();
+
+      if (pieces <= 0) {
+        showToast('Please enter valid bird count (pcs).', 'error');
+        return;
+      }
+
+      const newRecord = {
+        id: 'sale-' + Date.now().toString(36),
+        date,
+        customer,
+        pieces,
+        note
+      };
+
+      salesRecords.unshift(newRecord);
+      persistLocal();
+      if (window.cloudBridge) window.cloudBridge.saveSale(newRecord);
+      refreshAllViews();
+      resetNewEntryForm();
+      showToast(`Saved ${pieces} pcs for ${customer}!`);
+    }
+
+    function resetNewEntryForm() {
+      document.getElementById('newSaleForm').reset();
+      document.getElementById('saleDateInput').value = new Date().toISOString().split('T')[0];
+    }
+
+    function deleteSaleRecord(id) {
+      salesRecords = salesRecords.filter(s => s.id !== id);
+      persistLocal();
+      if (window.cloudBridge) window.cloudBridge.deleteSale(id);
+      refreshAllViews();
+      showToast('Ledger entry deleted.');
+    }
+
+    function handleSaveBatch(e) {
+      e.preventDefault();
+      const name = document.getElementById('batchNameInput').value.trim();
+      const pieces = parseInt(document.getElementById('batchPcsInput').value, 10) || 0;
+      const date = document.getElementById('batchDateInput').value;
+      const status = document.getElementById('batchStatusInput').value;
+      const note = document.getElementById('batchNoteInput').value.trim();
+
+      if (!name || pieces <= 0) {
+        showToast('Please enter batch name and bird count.', 'error');
+        return;
+      }
+
+      const newBatch = {
+        id: 'batch-' + Date.now().toString(36),
+        name,
+        pieces,
+        date,
+        status,
+        note
+      };
+
+      batchRecords.unshift(newBatch);
+      persistLocal();
+      if (window.cloudBridge) window.cloudBridge.saveBatch(newBatch);
+      refreshAllViews();
+      resetBatchForm();
+      showToast(`Saved batch "${name}" (${pieces} pcs)!`);
+    }
+
+    function resetBatchForm() {
+      document.getElementById('addBatchForm').reset();
+      document.getElementById('batchDateInput').value = new Date().toISOString().split('T')[0];
+    }
+
+    function updateBatchStatus(id, newStatus) {
+      const idx = batchRecords.findIndex(b => b.id === id);
+      if (idx !== -1) {
+        batchRecords[idx].status = newStatus;
+        persistLocal();
+        if (window.cloudBridge) window.cloudBridge.saveBatch(batchRecords[idx]);
+        refreshAllViews();
+        showToast(`Batch status updated to ${newStatus}.`);
+      }
+    }
+
+    function deleteBatchRecord(id) {
+      batchRecords = batchRecords.filter(b => b.id !== id);
+      persistLocal();
+      if (window.cloudBridge) window.cloudBridge.deleteBatch(id);
+      refreshAllViews();
+      showToast('Stock batch deleted.');
+    }
+
+    function refreshAllViews() {
+      renderDashboardView();
+      renderKhataTable();
+      renderInventoryView();
+      generateMonthlyReport();
+      renderCustomerDatalist();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderDashboardView() {
+      let totalSoldPcs = 0;
+      salesRecords.forEach(s => {
+        totalSoldPcs += Number(s.pieces || 0);
+      });
+
+      const activeBatches = batchRecords.filter(b => b.status === 'Active');
+      const totalBatchStock = activeBatches.reduce((sum, b) => sum + Number(b.pieces || 0), 0);
+
+      document.getElementById('dashBirdsSold').textContent = totalSoldPcs.toLocaleString('en-IN');
+      document.getElementById('dashLiveStockInline').textContent = `${totalBatchStock.toLocaleString('en-IN')} pcs`;
+
+      const listEl = document.getElementById('recentSalesList');
+      listEl.innerHTML = '';
+      const recents = salesRecords.slice(0, 5);
+
+      if (recents.length === 0) {
+        listEl.innerHTML = `<div class="py-10 text-center text-xs text-zinc-400">No sales recorded yet. Use the form to add your first entry.</div>`;
+      } else {
+        recents.forEach(s => {
+          const row = document.createElement('div');
+          row.className = "py-3.5 flex items-center justify-between gap-3 group";
+          row.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-[#EAF5EE] text-[#164A28] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                ${escapeHtml(getInitials(s.customer))}
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-bold text-zinc-900 truncate">${escapeHtml(s.customer)}</div>
+                <div class="text-xs text-zinc-400 mt-0.5">${formatDisplayDate(s.date)}${s.note ? ` · ${escapeHtml(s.note)}` : ''}</div>
+              </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#F6F4EC] text-[#164A28] font-extrabold text-xs sm:text-sm tabular-nums">
+                ${Number(s.pieces || 0).toLocaleString('en-IN')} pcs
+              </span>
+            </div>
+          `;
+          listEl.appendChild(row);
+        });
+      }
+    }
+
+    function setKhataFilter(filter) {
+      currentKhataFilter = filter;
+      const map = {
+        all: 'khataFilterAll',
+        today: 'khataFilterToday',
+        month: 'khataFilterMonth'
+      };
+      Object.keys(map).forEach(k => {
+        const btn = document.getElementById(map[k]);
+        if (!btn) return;
+        btn.className = (k === filter)
+          ? "min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-bold bg-[#164A28] text-white shadow-2xs transition"
+          : "min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-zinc-600 border border-[#E2DDD0] hover:bg-[#FAF9F5] transition";
+      });
+      renderKhataTable();
+    }
+
+    function renderKhataTable() {
+      const tbody = document.getElementById('khataTableBody');
+      const subtitle = document.getElementById('khataSummarySubtitle');
+      const query = (document.getElementById('khataSearchInput')?.value || '').toLowerCase().trim();
+      if (!tbody) return;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const monthPrefix = todayStr.slice(0, 7);
+
+      const filtered = salesRecords.filter(s => {
+        if (currentKhataFilter === 'today' && s.date !== todayStr) return false;
+        if (currentKhataFilter === 'month' && !s.date.startsWith(monthPrefix)) return false;
+
+        if (query) {
+          const matchCust = (s.customer || '').toLowerCase().includes(query);
+          const matchNote = (s.note || '').toLowerCase().includes(query);
+          if (!matchCust && !matchNote) return false;
+        }
+        return true;
+      });
+
+      const totalPcs = filtered.reduce((sum, s) => sum + Number(s.pieces || 0), 0);
+
+      if (subtitle) {
+        subtitle.textContent = `${filtered.length} entries • ${totalPcs.toLocaleString('en-IN')} pcs`;
+      }
+
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-12 text-center text-xs text-zinc-400">No matching customer ledger entries found.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(s => {
+        const pcs = Number(s.pieces || 0);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#FAF9F5] transition";
+        tr.innerHTML = `
+          <td class="py-3.5 px-4 sm:px-6 text-zinc-500 whitespace-nowrap">${formatDisplayDate(s.date)}</td>
+          <td class="py-3.5 px-4 font-bold text-zinc-900">
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-[#EAF5EE] text-[#164A28] font-bold text-[10px] inline-flex items-center justify-center flex-shrink-0">${escapeHtml(getInitials(s.customer))}</span>
+              <div>
+                <span>${escapeHtml(s.customer)}</span>
+                ${s.note ? `<span class="block text-[11px] font-normal text-zinc-400">${escapeHtml(s.note)}</span>` : ''}
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 text-center whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#EAF5EE] text-[#164A28] font-extrabold text-xs tabular-nums">${pcs.toLocaleString('en-IN')}</span>
+          </td>
+          <td class="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">
+            <button onclick="deleteSaleRecord('${s.id}')" title="Delete Entry" class="p-2 text-zinc-300 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderInventoryView() {
+      const totalSoldPcs = salesRecords.reduce((sum, s) => sum + Number(s.pieces || 0), 0);
+      const activeBatches = batchRecords.filter(b => b.status === 'Active');
+      const currentStock = activeBatches.reduce((sum, b) => sum + Number(b.pieces || 0), 0);
+
+      document.getElementById('invCurrentStock').textContent = currentStock.toLocaleString('en-IN');
+      document.getElementById('invActiveBatches').textContent = activeBatches.length.toLocaleString('en-IN');
+      document.getElementById('invTotalBatches').textContent = batchRecords.length.toLocaleString('en-IN');
+      document.getElementById('invSoldPcs').textContent = totalSoldPcs.toLocaleString('en-IN');
+      document.getElementById('stockBatchesCountText').textContent = `${batchRecords.length} batch(es) recorded`;
+
+      const tbody = document.getElementById('stockBatchesTableBody');
+      tbody.innerHTML = '';
+
+      if (batchRecords.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-xs text-zinc-400">No stock batches recorded yet.</td></tr>`;
+        return;
+      }
+
+      batchRecords.forEach(b => {
+        const isActive = b.status === 'Active';
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-[#FAF9F5] transition";
+        tr.innerHTML = `
+          <td class="py-3.5 pr-4 font-extrabold text-zinc-900 uppercase">${escapeHtml(b.name)}</td>
+          <td class="py-3.5 px-4 font-bold text-zinc-800 whitespace-nowrap tabular-nums">${Number(b.pieces || 0).toLocaleString('en-IN')}</td>
+          <td class="py-3.5 px-4 text-zinc-500 whitespace-nowrap">${formatDisplayDate(b.date)}</td>
+          <td class="py-3.5 px-4 text-zinc-400">${b.note ? escapeHtml(b.note) : '—'}</td>
+          <td class="py-3.5 px-4 whitespace-nowrap">
+            <select onchange="updateBatchStatus('${b.id}', this.value)" class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer ${isActive ? 'bg-emerald-50 text-[#1B7A43] border-emerald-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200'}">
+              <option value="Active" ${b.status === 'Active' ? 'selected' : ''}>ACTIVE</option>
+              <option value="Sold Out" ${b.status === 'Sold Out' ? 'selected' : ''}>SOLD OUT</option>
+              <option value="Closed" ${b.status === 'Closed' ? 'selected' : ''}>CLOSED</option>
+            </select>
+          </td>
+          <td class="py-3.5 pl-4 text-right whitespace-nowrap">
+            <button onclick="deleteBatchRecord('${b.id}')" title="Delete Batch" class="p-2 text-zinc-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function generateMonthlyReport() {
+      const mSel = document.getElementById('statementMonthSelect');
+      const ySel = document.getElementById('statementYearSelect');
+      if (!mSel || !ySel) return;
+
+      const selectedMonth = parseInt(mSel.value, 10);
+      const selectedYear = parseInt(ySel.value, 10);
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const periodStr = `${monthNames[selectedMonth]} ${selectedYear}`;
+
+      document.getElementById('statementPeriodTitle').textContent = periodStr;
+      document.getElementById('statementGenDate').textContent = formatDisplayDate(new Date().toISOString().split('T')[0]);
+
+      const monthSales = salesRecords.filter(s => {
+        const parts = (s.date || '').split('-');
+        if (parts.length !== 3) return false;
+        return (parseInt(parts[1], 10) - 1) === selectedMonth && parseInt(parts[0], 10) === selectedYear;
+      });
+
+      let totalPcs = 0;
+      const customerAgg = {};
+
+      monthSales.forEach(s => {
+        const pcs = Number(s.pieces || 0);
+        totalPcs += pcs;
+
+        const key = (s.customer || 'Unknown').trim();
+        if (!customerAgg[key]) {
+          customerAgg[key] = { entries: 0, pcs: 0 };
+        }
+        customerAgg[key].entries += 1;
+        customerAgg[key].pcs += pcs;
+      });
+
+      document.getElementById('pdfBirdsPcs').textContent = totalPcs.toLocaleString('en-IN');
+
+      const custBody = document.getElementById('pdfCustomerBreakdownBody');
+      custBody.innerHTML = '';
+      const custRows = Object.entries(customerAgg);
+
+      if (custRows.length === 0) {
+        custBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-zinc-400">No entries recorded for ${periodStr}.</td></tr>`;
+      } else {
+        custRows.forEach(([custName, stat]) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="py-2 px-2.5 font-bold text-zinc-900">${escapeHtml(custName)}</td>
+            <td class="py-2 px-2 text-center text-zinc-600 tabular-nums">${stat.entries}</td>
+            <td class="py-2 px-2.5 text-right font-bold text-[#1B7A43] tabular-nums">${stat.pcs.toLocaleString('en-IN')}</td>
+          `;
+          custBody.appendChild(tr);
+        });
+      }
+
+      const txBody = document.getElementById('pdfAllTransactionsBody');
+      txBody.innerHTML = '';
+      const chronologicalSales = [...monthSales].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+      if (chronologicalSales.length === 0) {
+        txBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-zinc-400">No transactions found for ${periodStr}.</td></tr>`;
+      } else {
+        chronologicalSales.forEach(s => {
+          const pcs = Number(s.pieces || 0);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="py-2 px-2 text-zinc-500 whitespace-nowrap">${formatDisplayDate(s.date)}</td>
+            <td class="py-2 px-2 font-bold text-zinc-900">${escapeHtml(s.customer)}</td>
+            <td class="py-2 px-2 text-right font-bold text-zinc-800 tabular-nums">${pcs.toLocaleString('en-IN')}</td>
+          `;
+          txBody.appendChild(tr);
+        });
+      }
+    }
+
+    async function rasterizeImg(imgEl, fallbackDataUrl) {
+      return new Promise(resolve => {
+        try {
+          const src = imgEl?.getAttribute('src') || '';
+          if (src.startsWith('data:image/')) { resolve(src); return; }
+          const tmp = new Image();
+          tmp.crossOrigin = 'anonymous';
+          tmp.onload = function() {
+            try {
+              const c = document.createElement('canvas');
+              c.width = tmp.naturalWidth || 200;
+              c.height = tmp.naturalHeight || 200;
+              const ctx = c.getContext('2d');
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, c.width, c.height);
+              ctx.drawImage(tmp, 0, 0, c.width, c.height);
+              resolve(c.toDataURL('image/png'));
+            } catch (e) { resolve(fallbackDataUrl); }
+          };
+          tmp.onerror = () => resolve(fallbackDataUrl);
+          tmp.src = src || fallbackDataUrl;
+        } catch (e) { resolve(fallbackDataUrl); }
+      });
+    }
+
+    async function downloadSettlementPDF() {
+      const btn = document.getElementById('downloadPdfBtn');
+      if (btn && btn.disabled) return;
+      generateMonthlyReport();
+
+      const sourceEl = document.getElementById('settlement-pdf-area');
+      const mSel = document.getElementById('statementMonthSelect');
+      const monthName = mSel.options[mSel.selectedIndex].text;
+      const year = document.getElementById('statementYearSelect').value;
+      const filename = `Patra_Farm_Monthly_Statement_${monthName}_${year}.pdf`;
+
+      if (btn) btn.disabled = true;
+      showToast('Generating Monthly Statement PDF...');
+
+      const prevX = window.scrollX || 0;
+      const prevY = window.scrollY || 0;
+
+      const logoUrl = await rasterizeImg(document.getElementById('pdfFarmLogo'), getEmbeddedLogoSvgDataUrl());
+      const sigUrl = await rasterizeImg(document.getElementById('pdfAuthorizedSignature'), getEmbeddedSignatureSvgDataUrl());
+
+      const host = document.createElement('div');
+      host.style.position = 'absolute';
+      host.style.left = '0';
+      host.style.top = '0';
+      host.style.width = '780px';
+      host.style.backgroundColor = '#ffffff';
+      host.style.zIndex = '99999';
+
+      const clone = sourceEl.cloneNode(true);
+      clone.style.width = '780px';
+      clone.style.maxWidth = '780px';
+      clone.style.minWidth = '780px';
+      clone.style.boxShadow = 'none';
+      clone.style.borderRadius = '0';
+      clone.style.margin = '0';
+      clone.style.padding = '36px 40px';
+
+      const cLogo = clone.querySelector('#pdfFarmLogo');
+      if (cLogo) { cLogo.onerror = null; cLogo.src = logoUrl; }
+      const cSig = clone.querySelector('#pdfAuthorizedSignature');
+      if (cSig) { cSig.onerror = null; cSig.src = sigUrl; }
+
+      host.appendChild(clone);
+      document.body.appendChild(host);
+      window.scrollTo(0, 0);
+      await new Promise(r => setTimeout(r, 120));
+
+      const fullH = Math.max(clone.scrollHeight, clone.offsetHeight, 1020);
+      const opt = {
+        margin: [6, 6, 6, 6],
+        filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          x: 0,
+          y: 0,
+          width: 780,
+          height: fullH,
+          windowWidth: 780,
+          windowHeight: fullH,
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      try {
+        await html2pdf().set(opt).from(clone).save();
+        showToast('Monthly Statement PDF downloaded!');
+      } catch (err) {
+        console.error(err);
+        showToast('PDF download failed. Please try again.', 'error');
+      } finally {
+        if (document.body.contains(host)) document.body.removeChild(host);
+        window.scrollTo(prevX, prevY);
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function renderCustomerDatalist() {
+      const dl = document.getElementById('customerSuggestions');
+      if (!dl) return;
+      dl.innerHTML = '';
+      const names = [...new Set(salesRecords.map(s => s.customer).filter(n => n && n !== 'Unknown'))];
+      names.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n;
+        dl.appendChild(opt);
+      });
+    }
+
+    function switchTab(tabId) {
+      const views = {
+        dashboard: 'viewDashboard',
+        khata: 'viewKhata',
+        inventory: 'viewInventory',
+        statement: 'viewStatement'
+      };
+      const dBtns = {
+        dashboard: 'tabDashboardBtn',
+        khata: 'tabKhataBtn',
+        inventory: 'tabInventoryBtn',
+        statement: 'tabStatementBtn'
+      };
+      const mBtns = {
+        dashboard: 'mobileTabDashboardBtn',
+        khata: 'mobileTabKhataBtn',
+        inventory: 'mobileTabInventoryBtn',
+        statement: 'mobileTabStatementBtn'
+      };
+
+      Object.keys(views).forEach(k => {
+        const v = document.getElementById(views[k]);
+        const d = document.getElementById(dBtns[k]);
+        const m = document.getElementById(mBtns[k]);
+        if (k === tabId) {
+          if (v) v.classList.remove('hidden');
+          if (d) d.className = "min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-[#164A28] shadow-xs flex items-center gap-2 transition";
+          if (m) m.className = "flex flex-col items-center justify-center gap-1 text-[#164A28] font-bold text-[11px]";
+        } else {
+          if (v) v.classList.add('hidden');
+          if (d) d.className = "min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 flex items-center gap-2 transition";
+          if (m) m.className = "flex flex-col items-center justify-center gap-1 text-zinc-500 font-medium text-[11px]";
+        }
+      });
+
+      if (tabId === 'statement') generateMonthlyReport();
+      if (tabId === 'khata') renderKhataTable();
+      if (tabId === 'inventory') renderInventoryView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function focusNewEntry() {
+      switchTab('dashboard');
+      const input = document.getElementById('saleCustomerInput');
+      if (input) {
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        input.focus();
+      }
+    }
+
+    function openSettingsModal() {
+      const m = document.getElementById('settingsModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeSettingsModal() {
+      const m = document.getElementById('settingsModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function saveCurrentAsDefaultData() {
+      localStorage.setItem(DEFAULT_SALES_KEY, JSON.stringify(salesRecords));
+      localStorage.setItem(DEFAULT_BATCHES_KEY, JSON.stringify(batchRecords));
+      persistLocal();
+      closeSettingsModal();
+      showToast('All current ledger & inventory data saved as default!');
+    }
+
+    function restoreSavedDefaultData() {
+      salesRecords = getDefaultSales();
+      batchRecords = getDefaultBatches();
+      persistLocal();
+      refreshAllViews();
+      closeSettingsModal();
+      showToast('Saved default data restored!');
+    }
+
+    function clearAllRecords() {
+      salesRecords = [];
+      batchRecords = [];
+      persistLocal();
+      refreshAllViews();
+      closeSettingsModal();
+      showToast('All records cleared.');
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+      if (!toast || !msg || !icon) return;
+
+      msg.textContent = message;
+      icon.innerHTML = type === 'error'
+        ? '<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>'
+        : '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+      if (window.lucide) lucide.createIcons();
+
+      toast.classList.remove('translate-y-[-140%]', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-140%]', 'opacity-0');
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const sDate = document.getElementById('saleDateInput');
+      const bDate = document.getElementById('batchDateInput');
+      if (sDate) sDate.value = todayStr;
+      if (bDate) bDate.value = todayStr;
+
+      const dDisp = document.getElementById('currentDateDisplay');
+      if (dDisp) {
+        dDisp.textContent = new Date().toLocaleDateString('en-GB', {
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+      }
+
+      const now = new Date();
+      const mSel = document.getElementById('statementMonthSelect');
+      const ySel = document.getElementById('statementYearSelect');
+      if (mSel) mSel.value = now.getMonth();
+      if (ySel) ySel.value = now.getFullYear();
+
+      applyBrandingAssets();
+      refreshAllViews();
+    });
+  </script>
+</body>
+</html>
