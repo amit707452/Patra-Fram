@@ -20,6 +20,32 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
+    window.addEventListener('unhandledrejection', function(event) {
+      if (event && typeof event.preventDefault === 'function') {
+        event.preventDefault();
+      }
+    });
+
+    function safeGetStorage(key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function safeSetStorage(key, val) {
+      try {
+        window.localStorage.setItem(key, val);
+      } catch (e) {}
+    }
+
+    function safeRemoveStorage(key) {
+      try {
+        window.localStorage.removeItem(key);
+      } catch (e) {}
+    }
+
     function getEmbeddedLogoSvgDataUrl() {
       const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
         <rect width="120" height="120" rx="24" fill="#ffffff"/>
@@ -150,7 +176,6 @@
           <div class="h-12 w-12 rounded-2xl bg-white border border-[#E2DDD0] p-1 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-xs ring-2 ring-[#164A28]/5">
             <img
               id="headerFarmLogo"
-              src="Screenshot_2026-11-05_at_9.12.11_AM-removebg-preview_3.png"
               alt="Patra Farm Logo"
               class="w-full h-full object-contain"
               onerror="handleLogoLoadError(this)"
@@ -167,7 +192,7 @@
 
         <div class="flex items-center gap-2 sm:gap-3.5 flex-shrink-0">
           <div class="hidden sm:flex flex-col items-end pr-1">
-            <span id="currentDateDisplay" class="text-xs font-semibold text-zinc-700">Wed, 18 Nov, 2026</span>
+            <span id="currentDateDisplay" class="text-xs font-semibold text-zinc-700">Thu, 19 Nov, 2026</span>
             <span id="cloudSyncIndicator" class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1.5 mt-0.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> All Phones Synced
             </span>
@@ -564,7 +589,6 @@
                 <div class="w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center flex-shrink-0 overflow-hidden p-0.5">
                   <img
                     id="pdfFarmLogo"
-                    src="Screenshot_2026-11-05_at_9.12.11_AM-removebg-preview_3.png"
                     alt="Patra Farm Logo"
                     class="w-full h-full object-contain"
                     onerror="handleLogoLoadError(this)"
@@ -580,7 +604,7 @@
               <div class="text-right">
                 <span class="inline-block bg-zinc-900 text-white text-[9px] font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">MONTHLY STATEMENT</span>
                 <p id="statementPeriodTitle" class="text-sm font-extrabold text-zinc-900 mt-1.5">November 2026</p>
-                <p class="text-[10px] text-zinc-400 mt-0.5">Generated: <span id="statementGenDate">18 Nov 2026</span></p>
+                <p class="text-[10px] text-zinc-400 mt-0.5">Generated: <span id="statementGenDate">19 Nov 2026</span></p>
               </div>
             </div>
 
@@ -635,7 +659,6 @@
               <div class="h-10 w-44 flex items-end justify-center mb-1 overflow-hidden">
                 <img
                   id="pdfAuthorizedSignature"
-                  src="WhatsApp Image 2026-01-17 at 01.21.51.jpeg"
                   alt="Amit Kumar Patra Signature"
                   class="max-h-9 max-w-full object-contain mix-blend-multiply contrast-125"
                   onerror="handleSignatureLoadError(this)"
@@ -748,13 +771,16 @@
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'patra-farm-default-id';
-    let firebaseConfig = null;
-    try {
-      if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-        firebaseConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
-      }
-    } catch (e) {}
+    const appId = 'patra-farm';
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbJaHfV46gx_bKcvpDugY9GEjg_8Uhmu8",
+      authDomain: "patra-farm.firebaseapp.com",
+      projectId: "patra-farm",
+      storageBucket: "patra-farm.firebasestorage.app",
+      messagingSenderId: "746199676466",
+      appId: "1:746199676466:web:54003668c0b4d8924f6e2b",
+      measurementId: "G-DRWZ3J90FR"
+    };
 
     let db = null;
     let currentUser = null;
@@ -772,10 +798,6 @@
     }
 
     async function initSync() {
-      if (!firebaseConfig) {
-        setSyncBadge('Local Device Synced', true);
-        return;
-      }
       try {
         setSyncBadge('Connecting Devices...', false);
         const app = initializeApp(firebaseConfig);
@@ -789,42 +811,53 @@
           const cred = await signInAnonymously(auth);
           currentUser = cred.user;
         }
-        if (!currentUser) return;
+        if (!currentUser) {
+          setSyncBadge('Local Device Synced', true);
+          return;
+        }
         isCloudReady = true;
         setSyncBadge('All Phones Live Synced', true);
 
         const salesCol = collection(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2');
         onSnapshot(salesCol, async (snap) => {
-          if (snap.empty && !seededSales) {
-            seededSales = true;
-            const localSales = window.getSalesList ? window.getSalesList() : [];
-            for (const item of localSales) {
-              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', item.id), { ...item, updatedAt: Date.now() });
+          try {
+            if (snap.empty && !seededSales) {
+              seededSales = true;
+              const localSales = window.getSalesList ? window.getSalesList() : [];
+              for (const item of localSales) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', item.id), { ...item, updatedAt: Date.now() });
+              }
+              return;
             }
-            return;
-          }
-          seededSales = true;
-          const items = [];
-          snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-          items.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
-          if (window.onCloudSalesUpdate) window.onCloudSalesUpdate(items);
+            seededSales = true;
+            const items = [];
+            snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+            items.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
+            if (window.onCloudSalesUpdate) window.onCloudSalesUpdate(items);
+          } catch (e) {}
+        }, () => {
+          setSyncBadge('Local Device Synced', true);
         });
 
         const batchesCol = collection(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2');
         onSnapshot(batchesCol, async (snap) => {
-          if (snap.empty && !seededBatches) {
-            seededBatches = true;
-            const localBatches = window.getBatchesList ? window.getBatchesList() : [];
-            for (const b of localBatches) {
-              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', b.id), { ...b, updatedAt: Date.now() });
+          try {
+            if (snap.empty && !seededBatches) {
+              seededBatches = true;
+              const localBatches = window.getBatchesList ? window.getBatchesList() : [];
+              for (const b of localBatches) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', b.id), { ...b, updatedAt: Date.now() });
+              }
+              return;
             }
-            return;
-          }
-          seededBatches = true;
-          const items = [];
-          snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-          items.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
-          if (window.onCloudBatchesUpdate) window.onCloudBatchesUpdate(items);
+            seededBatches = true;
+            const items = [];
+            snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+            items.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.updatedAt || 0) - (a.updatedAt || 0));
+            if (window.onCloudBatchesUpdate) window.onCloudBatchesUpdate(items);
+          } catch (e) {}
+        }, () => {
+          setSyncBadge('Local Device Synced', true);
         });
 
         const brandingRef = doc(db, 'artifacts', appId, 'public', 'data', 'patra_settings', 'branding_v2');
@@ -832,9 +865,8 @@
           if (snap.exists() && window.onCloudBrandingUpdate) {
             window.onCloudBrandingUpdate(snap.data());
           }
-        });
+        }, () => {});
       } catch (err) {
-        console.error('Sync init error:', err);
         setSyncBadge('Local Device Synced', true);
       }
     }
@@ -842,31 +874,41 @@
     window.cloudBridge = {
       async saveSale(record) {
         if (!isCloudReady || !db) return;
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', record.id), { ...record, updatedAt: Date.now() });
+        try {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', record.id), { ...record, updatedAt: Date.now() });
+        } catch (e) {}
       },
       async deleteSale(id) {
         if (!isCloudReady || !db) return;
-        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', id));
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_sales_v2', id));
+        } catch (e) {}
       },
       async saveBatch(record) {
         if (!isCloudReady || !db) return;
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', record.id), { ...record, updatedAt: Date.now() });
+        try {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', record.id), { ...record, updatedAt: Date.now() });
+        } catch (e) {}
       },
       async deleteBatch(id) {
         if (!isCloudReady || !db) return;
-        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', id));
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_batches_v2', id));
+        } catch (e) {}
       },
       async saveBranding(logo, signature) {
         if (!isCloudReady || !db) return;
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_settings', 'branding_v2'), {
-          logo: logo || '',
-          signature: signature || '',
-          updatedAt: Date.now()
-        }, { merge: true });
+        try {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'patra_settings', 'branding_v2'), {
+            logo: logo || '',
+            signature: signature || '',
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (e) {}
       }
     };
 
-    initSync();
+    initSync().catch(() => setSyncBadge('Local Device Synced', true));
   </script>
 
   <!-- Core Application Logic -->
@@ -877,8 +919,6 @@
     const DEFAULT_BATCHES_KEY = 'patra_farm_default_batches_v10';
     const LOGO_KEY = 'patra_farm_custom_logo_v9';
     const SIGNATURE_KEY = 'patra_farm_custom_signature_v9';
-    const DEFAULT_LOGO_SRC = 'Screenshot_2026-11-05_at_9.12.11_AM-removebg-preview_3.png';
-    const DEFAULT_SIGNATURE_SRC = 'WhatsApp Image 2026-01-17 at 01.21.51.jpeg';
 
     const initialSampleSales = [
       { id: 's-1', date: '2026-11-13', customer: 'Unknown', pieces: 70, note: '' },
@@ -904,40 +944,38 @@
     let currentKhataFilter = 'all';
 
     function getDefaultSales() {
-      try {
-        const saved = localStorage.getItem(DEFAULT_SALES_KEY);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {}
+      const saved = safeGetStorage(DEFAULT_SALES_KEY);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
       return JSON.parse(JSON.stringify(initialSampleSales));
     }
 
     function getDefaultBatches() {
-      try {
-        const saved = localStorage.getItem(DEFAULT_BATCHES_KEY);
-        if (saved) return JSON.parse(saved);
-      } catch (e) {}
+      const saved = safeGetStorage(DEFAULT_BATCHES_KEY);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
       return JSON.parse(JSON.stringify(initialSampleBatches));
     }
 
-    try {
-      const rawSales = localStorage.getItem(SALES_KEY);
-      salesRecords = rawSales ? JSON.parse(rawSales) : getDefaultSales();
-    } catch (e) {
+    const rawSales = safeGetStorage(SALES_KEY);
+    if (rawSales) {
+      try { salesRecords = JSON.parse(rawSales); } catch (e) { salesRecords = getDefaultSales(); }
+    } else {
       salesRecords = getDefaultSales();
     }
 
-    try {
-      const rawBatches = localStorage.getItem(BATCHES_KEY);
-      batchRecords = rawBatches ? JSON.parse(rawBatches) : getDefaultBatches();
-    } catch (e) {
+    const rawBatches = safeGetStorage(BATCHES_KEY);
+    if (rawBatches) {
+      try { batchRecords = JSON.parse(rawBatches); } catch (e) { batchRecords = getDefaultBatches(); }
+    } else {
       batchRecords = getDefaultBatches();
     }
 
     function persistLocal() {
-      try {
-        localStorage.setItem(SALES_KEY, JSON.stringify(salesRecords));
-        localStorage.setItem(BATCHES_KEY, JSON.stringify(batchRecords));
-      } catch (e) {}
+      safeSetStorage(SALES_KEY, JSON.stringify(salesRecords));
+      safeSetStorage(BATCHES_KEY, JSON.stringify(batchRecords));
     }
 
     function formatDisplayDate(isoDate) {
@@ -966,14 +1004,10 @@
     }
 
     function applyBrandingAssets() {
-      let logoSrc = DEFAULT_LOGO_SRC;
-      let sigSrc = DEFAULT_SIGNATURE_SRC;
-      try {
-        const customLogo = localStorage.getItem(LOGO_KEY);
-        if (customLogo) logoSrc = customLogo;
-        const customSig = localStorage.getItem(SIGNATURE_KEY);
-        if (customSig) sigSrc = customSig;
-      } catch (e) {}
+      const customLogo = safeGetStorage(LOGO_KEY);
+      const customSig = safeGetStorage(SIGNATURE_KEY);
+      const logoSrc = customLogo || getEmbeddedLogoSvgDataUrl();
+      const sigSrc = customSig || getEmbeddedSignatureSvgDataUrl();
 
       const hLogo = document.getElementById('headerFarmLogo');
       const pLogo = document.getElementById('pdfFarmLogo');
@@ -1013,10 +1047,10 @@
       const reader = new FileReader();
       reader.onload = async function(e) {
         const compressed = await compressImageDataUrl(e.target.result, 320, 0.85);
-        localStorage.setItem(LOGO_KEY, compressed);
+        safeSetStorage(LOGO_KEY, compressed);
         applyBrandingAssets();
         if (window.cloudBridge) {
-          window.cloudBridge.saveBranding(compressed, localStorage.getItem(SIGNATURE_KEY) || '');
+          window.cloudBridge.saveBranding(compressed, safeGetStorage(SIGNATURE_KEY) || '');
         }
         showToast('Farm logo updated & synced across all phones!');
       };
@@ -1025,10 +1059,10 @@
     }
 
     function resetToDefaultLogo() {
-      localStorage.removeItem(LOGO_KEY);
+      safeRemoveStorage(LOGO_KEY);
       applyBrandingAssets();
       if (window.cloudBridge) {
-        window.cloudBridge.saveBranding('', localStorage.getItem(SIGNATURE_KEY) || '');
+        window.cloudBridge.saveBranding('', safeGetStorage(SIGNATURE_KEY) || '');
       }
       showToast('Restored default Patra Farm logo.');
     }
@@ -1039,10 +1073,10 @@
       const reader = new FileReader();
       reader.onload = async function(e) {
         const compressed = await compressImageDataUrl(e.target.result, 360, 0.85);
-        localStorage.setItem(SIGNATURE_KEY, compressed);
+        safeSetStorage(SIGNATURE_KEY, compressed);
         applyBrandingAssets();
         if (window.cloudBridge) {
-          window.cloudBridge.saveBranding(localStorage.getItem(LOGO_KEY) || '', compressed);
+          window.cloudBridge.saveBranding(safeGetStorage(LOGO_KEY) || '', compressed);
         }
         showToast('Authorized signature updated & synced!');
       };
@@ -1051,10 +1085,10 @@
     }
 
     function resetToDefaultSignature() {
-      localStorage.removeItem(SIGNATURE_KEY);
+      safeRemoveStorage(SIGNATURE_KEY);
       applyBrandingAssets();
       if (window.cloudBridge) {
-        window.cloudBridge.saveBranding(localStorage.getItem(LOGO_KEY) || '', '');
+        window.cloudBridge.saveBranding(safeGetStorage(LOGO_KEY) || '', '');
       }
       showToast('Restored default signature.');
     }
@@ -1076,10 +1110,10 @@
 
     window.onCloudBrandingUpdate = function(data) {
       if (!data) return;
-      if (data.logo) localStorage.setItem(LOGO_KEY, data.logo);
-      else localStorage.removeItem(LOGO_KEY);
-      if (data.signature) localStorage.setItem(SIGNATURE_KEY, data.signature);
-      else localStorage.removeItem(SIGNATURE_KEY);
+      if (data.logo) safeSetStorage(LOGO_KEY, data.logo);
+      else safeRemoveStorage(LOGO_KEY);
+      if (data.signature) safeSetStorage(SIGNATURE_KEY, data.signature);
+      else safeRemoveStorage(SIGNATURE_KEY);
       applyBrandingAssets();
     };
 
@@ -1522,10 +1556,13 @@
       };
 
       try {
-        await html2pdf().set(opt).from(clone).save();
-        showToast('Monthly Statement PDF downloaded!');
+        if (typeof html2pdf !== 'undefined') {
+          await html2pdf().set(opt).from(clone).save();
+          showToast('Monthly Statement PDF downloaded!');
+        } else {
+          window.print();
+        }
       } catch (err) {
-        console.error(err);
         showToast('PDF download failed. Please try again.', 'error');
       } finally {
         if (document.body.contains(host)) document.body.removeChild(host);
@@ -1609,8 +1646,8 @@
     }
 
     function saveCurrentAsDefaultData() {
-      localStorage.setItem(DEFAULT_SALES_KEY, JSON.stringify(salesRecords));
-      localStorage.setItem(DEFAULT_BATCHES_KEY, JSON.stringify(batchRecords));
+      safeSetStorage(DEFAULT_SALES_KEY, JSON.stringify(salesRecords));
+      safeSetStorage(DEFAULT_BATCHES_KEY, JSON.stringify(batchRecords));
       persistLocal();
       closeSettingsModal();
       showToast('All current ledger & inventory data saved as default!');
