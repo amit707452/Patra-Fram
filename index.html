@@ -192,7 +192,7 @@
 
         <div class="flex items-center gap-2 sm:gap-3.5 flex-shrink-0">
           <div class="hidden sm:flex flex-col items-end pr-1">
-            <span id="currentDateDisplay" class="text-xs font-semibold text-zinc-700">Thu, 19 Nov, 2026</span>
+            <span id="currentDateDisplay" class="text-xs font-semibold text-zinc-700">Sun, 22 Nov, 2026</span>
             <span id="cloudSyncIndicator" class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1.5 mt-0.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> All Phones Synced
             </span>
@@ -243,7 +243,7 @@
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
           <h2 class="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-zinc-900">Today's Ledger</h2>
-          <p class="text-xs sm:text-sm text-zinc-500 mt-0.5">Live bird dispatch count &amp; farm stock overview</p>
+          <p class="text-xs sm:text-sm text-zinc-500 mt-0.5">Daily poultry dispatches and stock summary</p>
         </div>
         <div class="flex items-center gap-2 text-xs">
           <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#E2DDD0] text-zinc-600 font-medium shadow-2xs">
@@ -253,33 +253,35 @@
         </div>
       </div>
 
-      <!-- Featured Hero Summary Card: BIRDS SOLD + Live Stock Pill -->
+      <!-- Featured Hero Summary Card: LIVE STOCK -->
       <div class="card-elevated rounded-3xl p-5 sm:p-7 relative overflow-hidden transition-all">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">BIRDS SOLD</span>
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200/70">Cumulative</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-widest text-zinc-400">LIVE STOCK</span>
             </div>
-            <div class="mt-2.5 flex items-baseline gap-2">
-              <span id="dashBirdsSold" class="font-display text-4xl sm:text-5xl font-extrabold text-[#006BA6] tracking-tight tabular-nums">1,097</span>
-              <span class="text-sm sm:text-base font-semibold text-zinc-500">pcs</span>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span id="dashLiveStockMain" class="font-display text-4xl sm:text-5xl font-extrabold text-[#164A28] tracking-tight tabular-nums">3 pcs</span>
             </div>
-            <div class="mt-3 flex flex-wrap items-center gap-2.5 text-xs text-zinc-500">
-              <span>Across all customer entries</span>
+            <!-- All Active Batches / Breeds Chips -->
+            <div id="dashActiveBatchBadgesList" class="mt-2.5 flex flex-wrap items-center gap-1.5">
+              <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7]">KEGGFARMS PVT. LTD: 3 pcs</span>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+              <button type="button" onclick="openDispatchedModal()" class="inline-flex items-center gap-1 hover:underline text-left group">
+                <span>Dispatched from stock: <strong id="dashDispatchedSub" class="text-[#006BA6] tabular-nums">1,097 pcs</strong></span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#006BA6] group-hover:translate-x-0.5 transition-transform"></i>
+              </button>
               <span class="text-zinc-300">•</span>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAF5EE] text-[#164A28] font-bold">
-                <i data-lucide="warehouse" class="w-3.5 h-3.5"></i>
-                Live Stock: <span id="dashLiveStockInline" class="tabular-nums">1,100 pcs</span>
-              </span>
+              <span>Total Active Batch: <strong id="dashTotalBatchSub" class="text-zinc-700 tabular-nums">1,100 pcs</strong></span>
             </div>
           </div>
 
-          <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-50 to-emerald-50 border border-sky-100 text-[#006BA6] items-center justify-center flex-shrink-0">
-            <i data-lucide="feather" class="w-7 h-7"></i>
+          <div class="hidden sm:flex w-14 h-14 rounded-2xl bg-gradient-to-br from-[#EAF5EE] to-emerald-50 border border-[#CFE8D7] text-[#164A28] items-center justify-center flex-shrink-0">
+            <i data-lucide="egg" class="w-7 h-7"></i>
           </div>
         </div>
-        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#006BA6] via-emerald-500 to-[#164A28]"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#164A28] via-emerald-500 to-[#006BA6]"></div>
       </div>
 
       <!-- Bottom Split Grid: Left "New Entry" Form | Right "Recent Sales" -->
@@ -303,13 +305,21 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">CUSTOMER NAME</label>
-                <input type="text" id="saleCustomerInput" required list="customerSuggestions" placeholder="e.g. Dulal / Goutam" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none transition">
+                <input type="text" id="saleCustomerInput" list="customerSuggestions" required placeholder="e.g. Dulal / Goutam" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-medium text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none transition">
                 <datalist id="customerSuggestions"></datalist>
               </div>
               <div>
                 <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">DATE</label>
                 <input type="date" id="saleDateInput" required class="w-full min-h-[44px] px-3.5 py-2 bg-white border border-[#E2DDD0] rounded-xl text-sm font-semibold text-zinc-900 focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none transition">
               </div>
+            </div>
+
+            <!-- BATCH / BREED Selector -->
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5">BATCH / BREED</label>
+              <select id="saleBatchInput" class="w-full min-h-[44px] px-3.5 py-2 bg-[#FAF9F5] border border-[#E2DDD0] rounded-xl text-sm font-semibold text-zinc-900 focus:bg-white focus:border-[#164A28] outline-none transition">
+                <!-- Populated dynamically from Stock Batches -->
+              </select>
             </div>
 
             <!-- SALE DETAILS Box with Quick Quantity Chips -->
@@ -345,7 +355,7 @@
           <div class="flex items-start justify-between mb-4">
             <div>
               <h3 class="font-display text-lg font-extrabold text-zinc-900">Recent Sales</h3>
-              <p class="text-xs text-zinc-500 mt-0.5">Latest bird dispatches across your farm</p>
+              <p class="text-xs text-zinc-500 mt-0.5">Latest bird dispatches deducted from Live Stock</p>
             </div>
             <button onclick="switchTab('khata')" class="px-3 py-1.5 rounded-xl bg-[#EAF5EE] hover:bg-[#DCF0E3] text-xs font-bold text-[#164A28] flex items-center gap-1 transition">
               <span>All ledger</span>
@@ -370,7 +380,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 class="font-display text-2xl sm:text-[26px] font-extrabold tracking-tight text-zinc-900">Customer Ledger</h2>
-          <p id="khataSummarySubtitle" class="text-xs sm:text-sm text-zinc-500 mt-0.5">12 entries • 1,097 pcs</p>
+          <p id="khataSummarySubtitle" class="text-xs sm:text-sm text-zinc-500 mt-0.5">0 entries • 0 pcs</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
@@ -385,7 +395,7 @@
         <span class="absolute left-4 top-3.5 text-zinc-400">
           <i data-lucide="search" class="w-4 h-4"></i>
         </span>
-        <input type="text" id="khataSearchInput" oninput="renderKhataTable()" placeholder="Search by customer name or note..." class="w-full min-h-[46px] pl-11 pr-4 py-2.5 bg-white border border-[#E2DDD0] rounded-2xl text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none shadow-2xs transition">
+        <input type="text" id="khataSearchInput" oninput="renderKhataTable()" placeholder="Search by customer name, batch/breed, or note..." class="w-full min-h-[46px] pl-11 pr-4 py-2.5 bg-white border border-[#E2DDD0] rounded-2xl text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#164A28] focus:ring-3 focus:ring-[#164A28]/10 outline-none shadow-2xs transition">
       </div>
 
       <!-- Khata Table Card -->
@@ -396,6 +406,7 @@
               <tr class="bg-[#FAF9F5] border-b border-[#ECE9DF] text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                 <th class="py-3.5 px-4 sm:px-6">DATE</th>
                 <th class="py-3.5 px-4">CUSTOMER</th>
+                <th class="py-3.5 px-4">BATCH / BREED</th>
                 <th class="py-3.5 px-4 text-center">PCS</th>
                 <th class="py-3.5 px-4 sm:px-6 text-right">ACTION</th>
               </tr>
@@ -423,11 +434,12 @@
       <!-- 4 KPI Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
         <div class="card-elevated rounded-2xl p-4 sm:p-5">
-          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">CURRENT STOCK</span>
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">LIVE STOCK</span>
           <div class="mt-2 flex items-baseline gap-1">
             <span id="invCurrentStock" class="font-display text-2xl sm:text-3xl font-extrabold text-[#1B7A43] tabular-nums">1,100</span>
             <span class="text-xs font-semibold text-zinc-500">pcs</span>
           </div>
+          <span id="invActiveBatchName" class="block text-[11px] font-semibold text-[#164A28] truncate mt-1">KEGGFARMS PVT. LTD</span>
         </div>
 
         <div class="card-elevated rounded-2xl p-4 sm:p-5">
@@ -444,11 +456,16 @@
           </div>
         </div>
 
-        <div class="card-elevated rounded-2xl p-4 sm:p-5">
-          <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400">SOLD (PCS)</span>
-          <div class="mt-2">
-            <span id="invSoldPcs" class="font-display text-2xl sm:text-3xl font-extrabold text-[#006BA6] tabular-nums">0</span>
+        <div onclick="openDispatchedModal()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){openDispatchedModal();}" title="Click to view Dispatched (PCS) breakdown" class="card-elevated rounded-2xl p-4 sm:p-5 cursor-pointer hover:border-[#006BA6]/40 hover:bg-[#F5FAFD] active:scale-[0.99] transition group">
+          <div class="flex items-center justify-between gap-1">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-zinc-400 group-hover:text-[#006BA6] transition">DISPATCHED (PCS)</span>
+            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-[#006BA6] opacity-75 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition"></i>
           </div>
+          <div class="mt-2 flex items-baseline gap-1">
+            <span id="invSoldPcs" class="font-display text-2xl sm:text-3xl font-extrabold text-[#006BA6] tabular-nums">0</span>
+            <span class="text-xs font-semibold text-zinc-500">pcs</span>
+          </div>
+          <span class="block text-[11px] font-semibold text-[#006BA6] mt-1">View dispatch log &rarr;</span>
         </div>
       </div>
 
@@ -604,14 +621,37 @@
               <div class="text-right">
                 <span class="inline-block bg-zinc-900 text-white text-[9px] font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">MONTHLY STATEMENT</span>
                 <p id="statementPeriodTitle" class="text-sm font-extrabold text-zinc-900 mt-1.5">November 2026</p>
-                <p class="text-[10px] text-zinc-400 mt-0.5">Generated: <span id="statementGenDate">19 Nov 2026</span></p>
+                <p class="text-[10px] text-zinc-400 mt-0.5">Generated: <span id="statementGenDate">22 Nov 2026</span></p>
               </div>
             </div>
 
-            <!-- Single Summary Box: BIRDS (PCS) -->
+            <!-- Single Summary Box: BIRDS (PCS) + All BATCH / BREED Badges -->
             <div class="border border-zinc-200 rounded-xl p-3.5 mb-5 text-center bg-[#FAF9F5]">
               <span class="block text-[9px] font-bold uppercase tracking-wider text-zinc-400">BIRDS (PCS)</span>
-              <span id="pdfBirdsPcs" class="block text-xl font-black text-zinc-900 mt-0.5 tabular-nums">1,097</span>
+              <span id="pdfBirdsPcs" class="block text-xl font-black text-zinc-900 mt-0.5 tabular-nums">0</span>
+              <div id="pdfSummaryBatchBadgesList" class="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7]">
+                  BATCH / BREED: KEGGFARMS PVT. LTD (0 pcs)
+                </span>
+              </div>
+            </div>
+
+            <!-- BATCH / BREED WISE DISPATCH BREAKDOWN -->
+            <div class="mb-6">
+              <h4 class="text-[10px] font-extrabold text-zinc-700 uppercase tracking-wider mb-2">BATCH / BREED SUMMARY</h4>
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-zinc-100/80 text-zinc-500 text-[9px] font-bold uppercase tracking-wider border-y border-zinc-200">
+                    <th class="py-2 px-2.5">BATCH / BREED</th>
+                    <th class="py-2 px-2 text-right">ADDED STOCK (PCS)</th>
+                    <th class="py-2 px-2 text-center">ENTRIES</th>
+                    <th class="py-2 px-2.5 text-right">DISPATCHED (PCS)</th>
+                  </tr>
+                </thead>
+                <tbody id="pdfBatchBreakdownBody" class="divide-y divide-zinc-100 text-[11px]">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
             </div>
 
             <!-- CUSTOMER SETTLEMENT BREAKDOWN -->
@@ -639,6 +679,7 @@
                   <tr class="text-zinc-400 text-[9px] font-bold uppercase tracking-wider border-b border-zinc-200">
                     <th class="py-2 px-2">DATE</th>
                     <th class="py-2 px-2">CUSTOMER</th>
+                    <th class="py-2 px-2">BATCH / BREED</th>
                     <th class="py-2 px-2 text-right">PCS</th>
                   </tr>
                 </thead>
@@ -697,6 +738,66 @@
       </button>
     </div>
   </nav>
+
+  <!-- Dispatched (PCS) Drill-Down Modal -->
+  <div id="dispatchedModal" onclick="if(event.target===this) closeDispatchedModal()" class="fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs hidden items-end sm:items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-t-3xl sm:rounded-3xl w-[96%] max-w-xl p-5 sm:p-6 shadow-2xl border border-zinc-200 max-h-[88vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-zinc-100 flex-shrink-0">
+        <div>
+          <h3 class="font-display font-extrabold text-zinc-900 text-base sm:text-lg flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-[#E6F3FA] text-[#006BA6] flex items-center justify-center">
+              <i data-lucide="truck" class="w-4 h-4"></i>
+            </span>
+            <span>Dispatched Birds Breakdown</span>
+          </h3>
+          <p id="dispatchedModalSubtitle" class="text-xs text-zinc-500 mt-1">Total Dispatched: 0 pcs across 0 entries</p>
+        </div>
+        <button onclick="closeDispatchedModal()" aria-label="Close" class="min-w-[40px] min-h-[40px] flex items-center justify-center text-zinc-400 hover:text-zinc-700 rounded-xl hover:bg-zinc-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto flex-1 space-y-5 pr-1">
+        <!-- Customer Summary Chips -->
+        <div>
+          <h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">CUSTOMER-WISE DISPATCHED TOTAL</h4>
+          <div id="dispatchedCustomerSummaryList" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Complete Dispatch Entries List -->
+        <div>
+          <h4 class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">ALL DISPATCH ENTRIES</h4>
+          <div class="border border-zinc-100 rounded-2xl overflow-hidden">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-[#FAF9F5] border-b border-zinc-100 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                  <th class="py-2.5 px-3">DATE</th>
+                  <th class="py-2.5 px-3">CUSTOMER</th>
+                  <th class="py-2.5 px-3">BATCH / BREED</th>
+                  <th class="py-2.5 px-3 text-right">PCS</th>
+                </tr>
+              </thead>
+              <tbody id="dispatchedModalEntriesBody" class="divide-y divide-zinc-100">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 mt-4 border-t border-zinc-100 flex items-center justify-between gap-2 flex-shrink-0">
+        <button type="button" onclick="closeDispatchedModal(); switchTab('khata');" class="flex-1 min-h-[42px] px-4 py-2 bg-[#164A28] hover:bg-[#10381E] text-white font-bold text-xs sm:text-sm rounded-xl transition flex items-center justify-center gap-1.5">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Open Full Khata Ledger</span>
+        </button>
+        <button type="button" onclick="closeDispatchedModal()" class="min-h-[42px] px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-semibold text-xs sm:text-sm rounded-xl transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Settings, Logo, Signature & Default Data Modal -->
   <div id="settingsModal" class="fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-xs hidden items-end sm:items-center justify-center p-2 sm:p-4">
@@ -768,6 +869,7 @@
   <!-- Multi-Device Real-Time Sync Module -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -781,6 +883,13 @@
       appId: "1:746199676466:web:54003668c0b4d8924f6e2b",
       measurementId: "G-DRWZ3J90FR"
     };
+
+    const app = initializeApp(firebaseConfig);
+    isSupported().then((supported) => {
+      if (supported) {
+        getAnalytics(app);
+      }
+    }).catch(() => {});
 
     let db = null;
     let currentUser = null;
@@ -800,7 +909,6 @@
     async function initSync() {
       try {
         setSyncBadge('Connecting Devices...', false);
-        const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
         const auth = getAuth(app);
 
@@ -921,18 +1029,18 @@
     const SIGNATURE_KEY = 'patra_farm_custom_signature_v9';
 
     const initialSampleSales = [
-      { id: 's-1', date: '2026-11-13', customer: 'Unknown', pieces: 70, note: '' },
-      { id: 's-2', date: '2026-11-08', customer: 'Unknown', pieces: 34, note: '' },
-      { id: 's-3', date: '2026-11-08', customer: 'Unknown', pieces: 41, note: '' },
-      { id: 's-4', date: '2026-11-08', customer: 'Goutam', pieces: 56, note: '' },
-      { id: 's-5', date: '2026-11-07', customer: 'Dulal', pieces: 157, note: '' },
-      { id: 's-6', date: '2026-11-07', customer: 'Goutam', pieces: 101, note: '' },
-      { id: 's-7', date: '2026-11-06', customer: 'Rabin Patra', pieces: 100, note: '' },
-      { id: 's-8', date: '2026-11-06', customer: 'Kalipada', pieces: 81, note: '' },
-      { id: 's-9', date: '2026-11-06', customer: 'Goutam', pieces: 122, note: '' },
-      { id: 's-10', date: '2026-11-05', customer: 'Goutam', pieces: 101, note: '' },
-      { id: 's-11', date: '2026-11-05', customer: 'Dulal', pieces: 83, note: '' },
-      { id: 's-12', date: '2026-11-04', customer: 'Dulal', pieces: 151, note: '' }
+      { id: 's-1', customer: 'Unknown', date: '2026-11-13', pieces: 70, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-2', customer: 'Unknown', date: '2026-11-08', pieces: 34, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-3', customer: 'Unknown', date: '2026-11-08', pieces: 41, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-4', customer: 'Goutam', date: '2026-11-08', pieces: 56, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-5', customer: 'Dulal', date: '2026-11-07', pieces: 157, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-6', customer: 'Goutam', date: '2026-11-07', pieces: 101, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-7', customer: 'Rabin Patra', date: '2026-11-06', pieces: 100, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-8', customer: 'Kalipada', date: '2026-11-06', pieces: 81, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-9', customer: 'Goutam', date: '2026-11-06', pieces: 122, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-10', customer: 'Goutam', date: '2026-11-05', pieces: 101, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-11', customer: 'Dulal', date: '2026-11-05', pieces: 83, batch: 'KEGGFARMS PVT. LTD', note: '' },
+      { id: 's-12', customer: 'Dulal', date: '2026-11-04', pieces: 151, batch: 'KEGGFARMS PVT. LTD', note: '' }
     ];
 
     const initialSampleBatches = [
@@ -941,238 +1049,621 @@
 
     let salesRecords = [];
     let batchRecords = [];
-    let currentKhataFilter = 'all';
+    let activeTab = 'dashboard';
+    let khataFilter = 'all';
 
-    function getDefaultSales() {
-      const saved = safeGetStorage(DEFAULT_SALES_KEY);
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
-      }
-      return JSON.parse(JSON.stringify(initialSampleSales));
-    }
-
-    function getDefaultBatches() {
-      const saved = safeGetStorage(DEFAULT_BATCHES_KEY);
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
-      }
-      return JSON.parse(JSON.stringify(initialSampleBatches));
-    }
-
-    const rawSales = safeGetStorage(SALES_KEY);
-    if (rawSales) {
-      try { salesRecords = JSON.parse(rawSales); } catch (e) { salesRecords = getDefaultSales(); }
-    } else {
-      salesRecords = getDefaultSales();
-    }
-
-    const rawBatches = safeGetStorage(BATCHES_KEY);
-    if (rawBatches) {
-      try { batchRecords = JSON.parse(rawBatches); } catch (e) { batchRecords = getDefaultBatches(); }
-    } else {
-      batchRecords = getDefaultBatches();
-    }
-
-    function persistLocal() {
-      safeSetStorage(SALES_KEY, JSON.stringify(salesRecords));
-      safeSetStorage(BATCHES_KEY, JSON.stringify(batchRecords));
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function formatDisplayDate(isoDate) {
-      if (!isoDate) return '-';
+      if (!isoDate) return '—';
       const parts = isoDate.split('-');
       if (parts.length !== 3) return isoDate;
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const mIdx = parseInt(parts[1], 10) - 1;
       const day = parts[2];
-      const month = months[parseInt(parts[1], 10) - 1] || parts[1];
-      return `${day} ${month} ${parts[0]}`;
+      const year = parts[0];
+      return `${day} ${months[mIdx] || parts[1]} ${year}`;
     }
 
-    function getInitials(name) {
-      const clean = (name || 'U').trim();
-      const parts = clean.split(/\s+/);
-      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-      return clean.slice(0, 2).toUpperCase();
+    function getTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
     }
 
-    function addQuickPcs(delta) {
-      const input = document.getElementById('salePcsInput');
-      if (!input) return;
-      const current = parseInt(input.value, 10) || 0;
-      input.value = current + delta;
-      input.focus();
-    }
-
-    function applyBrandingAssets() {
-      const customLogo = safeGetStorage(LOGO_KEY);
-      const customSig = safeGetStorage(SIGNATURE_KEY);
-      const logoSrc = customLogo || getEmbeddedLogoSvgDataUrl();
-      const sigSrc = customSig || getEmbeddedSignatureSvgDataUrl();
-
-      const hLogo = document.getElementById('headerFarmLogo');
-      const pLogo = document.getElementById('pdfFarmLogo');
-      const pSig = document.getElementById('pdfAuthorizedSignature');
-      if (hLogo) hLogo.src = logoSrc;
-      if (pLogo) pLogo.src = logoSrc;
-      if (pSig) pSig.src = sigSrc;
-    }
-
-    function compressImageDataUrl(dataUrl, maxDim, quality) {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.onload = function() {
-          let w = img.naturalWidth || maxDim;
-          let h = img.naturalHeight || maxDim;
-          if (w > maxDim || h > maxDim) {
-            if (w >= h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, w, h);
-          ctx.drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.onerror = () => resolve(dataUrl);
-        img.src = dataUrl;
-      });
-    }
-
-    function handleCustomLogoUpload(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        const compressed = await compressImageDataUrl(e.target.result, 320, 0.85);
-        safeSetStorage(LOGO_KEY, compressed);
-        applyBrandingAssets();
-        if (window.cloudBridge) {
-          window.cloudBridge.saveBranding(compressed, safeGetStorage(SIGNATURE_KEY) || '');
-        }
-        showToast('Farm logo updated & synced across all phones!');
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
-    }
-
-    function resetToDefaultLogo() {
-      safeRemoveStorage(LOGO_KEY);
-      applyBrandingAssets();
-      if (window.cloudBridge) {
-        window.cloudBridge.saveBranding('', safeGetStorage(SIGNATURE_KEY) || '');
+    function resolveSaleBatchName(sale) {
+      if (sale && sale.batch && String(sale.batch).trim()) {
+        return String(sale.batch).trim();
       }
-      showToast('Restored default Patra Farm logo.');
-    }
-
-    function handleCustomSignatureUpload(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        const compressed = await compressImageDataUrl(e.target.result, 360, 0.85);
-        safeSetStorage(SIGNATURE_KEY, compressed);
-        applyBrandingAssets();
-        if (window.cloudBridge) {
-          window.cloudBridge.saveBranding(safeGetStorage(LOGO_KEY) || '', compressed);
-        }
-        showToast('Authorized signature updated & synced!');
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
-    }
-
-    function resetToDefaultSignature() {
-      safeRemoveStorage(SIGNATURE_KEY);
-      applyBrandingAssets();
-      if (window.cloudBridge) {
-        window.cloudBridge.saveBranding(safeGetStorage(LOGO_KEY) || '', '');
+      if (!sale || !sale.date || batchRecords.length === 0) {
+        return batchRecords[0]?.name || 'General Stock';
       }
-      showToast('Restored default signature.');
+      const matchingByDate = batchRecords
+        .filter(b => b.date && b.date <= sale.date)
+        .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      if (matchingByDate.length > 0 && matchingByDate[0].name) {
+        return matchingByDate[0].name;
+      }
+      const activeBatch = batchRecords.find(b => b.status === 'Active');
+      return (activeBatch && activeBatch.name) || batchRecords[0]?.name || 'General Stock';
+    }
+
+    function renderBatchSelectorOptions() {
+      const selectEl = document.getElementById('saleBatchInput');
+      if (!selectEl) return;
+      const currentVal = selectEl.value;
+      const activeBatches = batchRecords.filter(b => (b.status || 'Active') === 'Active');
+      const otherBatches = batchRecords.filter(b => (b.status || 'Active') !== 'Active');
+
+      let optionsHtml = '';
+      if (activeBatches.length > 0) {
+        optionsHtml += activeBatches
+          .map(b => `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)} (Active)</option>`)
+          .join('');
+      }
+      if (otherBatches.length > 0) {
+        optionsHtml += otherBatches
+          .map(b => `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)} (${escapeHtml(b.status)})</option>`)
+          .join('');
+      }
+      if (!optionsHtml) {
+        optionsHtml = `<option value="General Stock">General Stock</option>`;
+      }
+
+      selectEl.innerHTML = optionsHtml;
+      if (currentVal && Array.from(selectEl.options).some(o => o.value === currentVal)) {
+        selectEl.value = currentVal;
+      }
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toastNotification');
+      const msgEl = document.getElementById('toastMessage');
+      const iconEl = document.getElementById('toastIcon');
+      if (!toast || !msgEl || !iconEl) return;
+
+      msgEl.textContent = message;
+      iconEl.innerHTML = isError
+        ? '<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>'
+        : '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+      if (window.lucide) lucide.createIcons();
+
+      toast.classList.remove('translate-y-[-140%]', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-[-140%]', 'opacity-0');
+      }, 3000);
+    }
+
+    function getSavedDefaultSales() {
+      try {
+        const raw = safeGetStorage(DEFAULT_SALES_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(initialSampleSales));
+    }
+
+    function getSavedDefaultBatches() {
+      try {
+        const raw = safeGetStorage(DEFAULT_BATCHES_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(initialSampleBatches));
+    }
+
+    function loadInitialData() {
+      try {
+        const rawSales = safeGetStorage(SALES_KEY);
+        salesRecords = rawSales ? JSON.parse(rawSales) : getSavedDefaultSales();
+      } catch (e) {
+        salesRecords = getSavedDefaultSales();
+      }
+
+      try {
+        const rawBatches = safeGetStorage(BATCHES_KEY);
+        batchRecords = rawBatches ? JSON.parse(rawBatches) : getSavedDefaultBatches();
+      } catch (e) {
+        batchRecords = getSavedDefaultBatches();
+      }
+    }
+
+    function persistLocalData() {
+      safeSetStorage(SALES_KEY, JSON.stringify(salesRecords));
+      safeSetStorage(BATCHES_KEY, JSON.stringify(batchRecords));
     }
 
     window.getSalesList = () => salesRecords;
     window.getBatchesList = () => batchRecords;
 
-    window.onCloudSalesUpdate = function(liveList) {
-      salesRecords = liveList;
-      persistLocal();
-      refreshAllViews();
+    window.onCloudSalesUpdate = (items) => {
+      salesRecords = items;
+      persistLocalData();
+      renderAll();
     };
 
-    window.onCloudBatchesUpdate = function(liveList) {
-      batchRecords = liveList;
-      persistLocal();
-      refreshAllViews();
+    window.onCloudBatchesUpdate = (items) => {
+      batchRecords = items;
+      persistLocalData();
+      renderAll();
     };
 
-    window.onCloudBrandingUpdate = function(data) {
-      if (!data) return;
-      if (data.logo) safeSetStorage(LOGO_KEY, data.logo);
-      else safeRemoveStorage(LOGO_KEY);
-      if (data.signature) safeSetStorage(SIGNATURE_KEY, data.signature);
-      else safeRemoveStorage(SIGNATURE_KEY);
+    window.onCloudBrandingUpdate = (data) => {
+      if (data && data.logo) {
+        safeSetStorage(LOGO_KEY, data.logo);
+      }
+      if (data && data.signature) {
+        safeSetStorage(SIGNATURE_KEY, data.signature);
+      }
       applyBrandingAssets();
     };
 
-    function handleSaveSale(e) {
-      e.preventDefault();
-      const customer = document.getElementById('saleCustomerInput').value.trim() || 'Unknown';
-      const date = document.getElementById('saleDateInput').value;
-      const pieces = parseInt(document.getElementById('salePcsInput').value, 10) || 0;
-      const note = document.getElementById('saleNoteInput').value.trim();
+    function applyBrandingAssets() {
+      const logoSrc = safeGetStorage(LOGO_KEY) || getEmbeddedLogoSvgDataUrl();
+      const sigSrc = safeGetStorage(SIGNATURE_KEY) || getEmbeddedSignatureSvgDataUrl();
 
-      if (pieces <= 0) {
-        showToast('Please enter valid bird count (pcs).', 'error');
+      const hLogo = document.getElementById('headerFarmLogo');
+      const pLogo = document.getElementById('pdfFarmLogo');
+      const pSig = document.getElementById('pdfAuthorizedSignature');
+
+      if (hLogo) hLogo.src = logoSrc;
+      if (pLogo) pLogo.src = logoSrc;
+      if (pSig) pSig.src = sigSrc;
+    }
+
+    function switchTab(tabName) {
+      activeTab = tabName;
+      const views = {
+        dashboard: document.getElementById('viewDashboard'),
+        khata: document.getElementById('viewKhata'),
+        inventory: document.getElementById('viewInventory'),
+        statement: document.getElementById('viewStatement')
+      };
+
+      Object.keys(views).forEach(key => {
+        if (views[key]) {
+          views[key].classList.toggle('hidden', key !== tabName);
+        }
+      });
+
+      const desktopBtns = {
+        dashboard: document.getElementById('tabDashboardBtn'),
+        khata: document.getElementById('tabKhataBtn'),
+        inventory: document.getElementById('tabInventoryBtn'),
+        statement: document.getElementById('tabStatementBtn')
+      };
+
+      Object.keys(desktopBtns).forEach(key => {
+        const btn = desktopBtns[key];
+        if (!btn) return;
+        if (key === tabName) {
+          btn.className = 'min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-[#164A28] shadow-xs flex items-center gap-2 transition';
+        } else {
+          btn.className = 'min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 flex items-center gap-2 transition';
+        }
+      });
+
+      const mobileBtns = {
+        dashboard: document.getElementById('mobileTabDashboardBtn'),
+        khata: document.getElementById('mobileTabKhataBtn'),
+        inventory: document.getElementById('mobileTabInventoryBtn'),
+        statement: document.getElementById('mobileTabStatementBtn')
+      };
+
+      Object.keys(mobileBtns).forEach(key => {
+        const btn = mobileBtns[key];
+        if (!btn) return;
+        if (key === tabName) {
+          btn.className = 'flex flex-col items-center justify-center gap-1 text-[#164A28] font-bold text-[11px]';
+        } else {
+          btn.className = 'flex flex-col items-center justify-center gap-1 text-zinc-500 font-medium text-[11px]';
+        }
+      });
+
+      if (tabName === 'statement') {
+        generateMonthlyReport();
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function focusNewEntry() {
+      switchTab('dashboard');
+      setTimeout(() => {
+        const custInput = document.getElementById('saleCustomerInput');
+        if (custInput) {
+          custInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          custInput.focus();
+        }
+      }, 60);
+    }
+
+    function addQuickPcs(amount) {
+      const pcsEl = document.getElementById('salePcsInput');
+      if (!pcsEl) return;
+      const current = parseInt(pcsEl.value, 10) || 0;
+      pcsEl.value = current + amount;
+    }
+
+    function resetNewEntryForm() {
+      const custEl = document.getElementById('saleCustomerInput');
+      const dateEl = document.getElementById('saleDateInput');
+      const pcsEl = document.getElementById('salePcsInput');
+      const noteEl = document.getElementById('saleNoteInput');
+
+      if (custEl) custEl.value = '';
+      if (dateEl) dateEl.value = getTodayISO();
+      renderBatchSelectorOptions();
+      if (pcsEl) pcsEl.value = '';
+      if (noteEl) noteEl.value = '';
+    }
+
+    function handleSaveSale(event) {
+      event.preventDefault();
+      const custEl = document.getElementById('saleCustomerInput');
+      const dateEl = document.getElementById('saleDateInput');
+      const batchEl = document.getElementById('saleBatchInput');
+      const pcsEl = document.getElementById('salePcsInput');
+      const noteEl = document.getElementById('saleNoteInput');
+
+      const customer = (custEl?.value || '').trim();
+      const date = dateEl?.value || getTodayISO();
+      const batch = (batchEl?.value || '').trim() || resolveSaleBatchName({ date });
+      const pieces = parseInt(pcsEl?.value || '0', 10);
+      const note = (noteEl?.value || '').trim();
+
+      if (!customer) {
+        showToast('Please enter a customer name.', true);
+        return;
+      }
+      if (!pieces || pieces <= 0) {
+        showToast('Please enter valid bird count (pcs).', true);
         return;
       }
 
       const newRecord = {
-        id: 'sale-' + Date.now().toString(36),
-        date,
+        id: 'sale-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
         customer,
+        date,
+        batch,
         pieces,
         note
       };
 
       salesRecords.unshift(newRecord);
-      persistLocal();
-      if (window.cloudBridge) window.cloudBridge.saveSale(newRecord);
-      refreshAllViews();
+      salesRecords.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      persistLocalData();
+      renderAll();
       resetNewEntryForm();
-      showToast(`Saved ${pieces} pcs for ${customer}!`);
-    }
+      showToast(`Saved ${pieces} pcs (${batch}) for ${customer}`);
 
-    function resetNewEntryForm() {
-      document.getElementById('newSaleForm').reset();
-      document.getElementById('saleDateInput').value = new Date().toISOString().split('T')[0];
+      if (window.cloudBridge && window.cloudBridge.saveSale) {
+        window.cloudBridge.saveSale(newRecord);
+      }
     }
 
     function deleteSaleRecord(id) {
+      const target = salesRecords.find(s => s.id === id);
+      if (!target) return;
       salesRecords = salesRecords.filter(s => s.id !== id);
-      persistLocal();
-      if (window.cloudBridge) window.cloudBridge.deleteSale(id);
-      refreshAllViews();
-      showToast('Ledger entry deleted.');
+      persistLocalData();
+      renderAll();
+      showToast(`Deleted entry (${target.pieces} pcs)`);
+
+      if (window.cloudBridge && window.cloudBridge.deleteSale) {
+        window.cloudBridge.deleteSale(id);
+      }
     }
 
-    function handleSaveBatch(e) {
-      e.preventDefault();
-      const name = document.getElementById('batchNameInput').value.trim();
-      const pieces = parseInt(document.getElementById('batchPcsInput').value, 10) || 0;
-      const date = document.getElementById('batchDateInput').value;
-      const status = document.getElementById('batchStatusInput').value;
-      const note = document.getElementById('batchNoteInput').value.trim();
+    function getStockTotals() {
+      const activeBatches = batchRecords.filter(b => (b.status || 'Active') === 'Active');
+      const totalBatchStockPcs = activeBatches.reduce((sum, b) => sum + (Number(b.pieces) || 0), 0);
+      const activeBatchNames = activeBatches.map(b => (b.name || '').trim()).filter(Boolean);
+      const activeBatchLabel = activeBatchNames.length > 0 ? activeBatchNames.join(', ') : 'No Active Batch';
 
-      if (!name || pieces <= 0) {
-        showToast('Please enter batch name and bird count.', 'error');
+      // Per-batch breakdown for all active batches
+      const activeBatchMap = new Map();
+      activeBatches.forEach(b => {
+        const bName = (b.name || 'Unnamed Batch').trim();
+        const prev = activeBatchMap.get(bName) || { name: bName, added: 0, earliestDate: b.date || '' };
+        prev.added += Number(b.pieces) || 0;
+        if (b.date && (!prev.earliestDate || b.date < prev.earliestDate)) {
+          prev.earliestDate = b.date;
+        }
+        activeBatchMap.set(bName, prev);
+      });
+
+      const activeBatchesBreakdown = Array.from(activeBatchMap.values()).map(item => {
+        const dispatchedForBatch = salesRecords
+          .filter(s => resolveSaleBatchName(s).toLowerCase() === item.name.toLowerCase() && (!item.earliestDate || (s.date || '') >= item.earliestDate))
+          .reduce((sum, s) => sum + (Number(s.pieces) || 0), 0);
+        const remaining = Math.max(0, item.added - dispatchedForBatch);
+        return {
+          name: item.name,
+          added: item.added,
+          dispatched: dispatchedForBatch,
+          remaining
+        };
+      });
+
+      let earliestActiveDate = null;
+      activeBatches.forEach(b => {
+        if (b.date && (!earliestActiveDate || b.date < earliestActiveDate)) {
+          earliestActiveDate = b.date;
+        }
+      });
+
+      const totalDispatchedPcs = salesRecords.reduce((sum, s) => sum + (Number(s.pieces) || 0), 0);
+      const activeBatchDispatchedPcs = activeBatches.length === 0
+        ? 0
+        : salesRecords
+            .filter(s => !earliestActiveDate || (s.date || '') >= earliestActiveDate)
+            .reduce((sum, s) => sum + (Number(s.pieces) || 0), 0);
+
+      const remainingLiveStock = activeBatches.length === 0
+        ? 0
+        : Math.max(0, totalBatchStockPcs - activeBatchDispatchedPcs);
+
+      return {
+        totalDispatchedPcs,
+        activeBatchDispatchedPcs,
+        totalBatchStockPcs,
+        remainingLiveStock,
+        activeBatchLabel,
+        activeBatchesBreakdown
+      };
+    }
+
+    function renderDashboard() {
+      const { activeBatchDispatchedPcs, totalBatchStockPcs, remainingLiveStock, activeBatchesBreakdown } = getStockTotals();
+
+      const liveMainEl = document.getElementById('dashLiveStockMain');
+      const batchBadgesListEl = document.getElementById('dashActiveBatchBadgesList');
+      const dispatchedSubEl = document.getElementById('dashDispatchedSub');
+      const totalBatchSubEl = document.getElementById('dashTotalBatchSub');
+
+      if (liveMainEl) {
+        liveMainEl.textContent = `${remainingLiveStock.toLocaleString()} pcs`;
+        liveMainEl.classList.toggle('text-rose-600', remainingLiveStock < 0);
+        liveMainEl.classList.toggle('text-[#164A28]', remainingLiveStock >= 0);
+      }
+
+      if (batchBadgesListEl) {
+        if (activeBatchesBreakdown.length === 0) {
+          batchBadgesListEl.innerHTML = `<span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-zinc-100 text-zinc-500 border border-zinc-200">No Active Batch</span>`;
+        } else {
+          batchBadgesListEl.innerHTML = activeBatchesBreakdown.map(b => `
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7] tabular-nums">
+              ${escapeHtml(b.name)}: ${b.remaining.toLocaleString()} pcs
+            </span>
+          `).join('');
+        }
+      }
+
+      if (dispatchedSubEl) dispatchedSubEl.textContent = `${activeBatchDispatchedPcs.toLocaleString()} pcs`;
+      if (totalBatchSubEl) totalBatchSubEl.textContent = `${totalBatchStockPcs.toLocaleString()} pcs`;
+
+      const listEl = document.getElementById('recentSalesList');
+      if (!listEl) return;
+
+      if (salesRecords.length === 0) {
+        listEl.innerHTML = `<div class="py-10 text-center text-xs text-zinc-400">No sales recorded yet. Add a new entry on the left.</div>`;
+        return;
+      }
+
+      const recentItems = salesRecords.slice(0, 6);
+      listEl.innerHTML = recentItems.map(item => {
+        const initials = (item.customer || '?').slice(0, 2).toUpperCase();
+        const batchLabel = resolveSaleBatchName(item);
+        return `
+          <div class="py-3.5 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-[#EAF5EE] border border-[#CFE8D7] text-[#164A28] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                ${escapeHtml(initials)}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-zinc-900 truncate">${escapeHtml(item.customer)}</p>
+                <p class="text-[11px] text-zinc-400 mt-0.5 truncate">${formatDisplayDate(item.date)} • <span class="text-[#164A28] font-semibold">${escapeHtml(batchLabel)}</span>${item.note ? ' • ' + escapeHtml(item.note) : ''}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5 flex-shrink-0">
+              <span class="px-2.5 py-1 rounded-lg bg-[#FAF9F5] border border-[#E7E3D7] text-xs font-extrabold text-zinc-900 tabular-nums">${Number(item.pieces).toLocaleString()} pcs</span>
+              <button onclick="deleteSaleRecord('${escapeHtml(item.id)}')" title="Delete entry" class="p-1.5 text-zinc-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openDispatchedModal() {
+      const modal = document.getElementById('dispatchedModal');
+      const subEl = document.getElementById('dispatchedModalSubtitle');
+      const summaryEl = document.getElementById('dispatchedCustomerSummaryList');
+      const entriesBody = document.getElementById('dispatchedModalEntriesBody');
+      if (!modal) return;
+
+      const sortedSales = [...salesRecords].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const totalPcs = sortedSales.reduce((sum, s) => sum + (Number(s.pieces) || 0), 0);
+
+      if (subEl) {
+        subEl.textContent = `Total Dispatched: ${totalPcs.toLocaleString()} pcs across ${sortedSales.length} entries`;
+      }
+
+      if (summaryEl) {
+        if (sortedSales.length === 0) {
+          summaryEl.innerHTML = `<div class="col-span-full py-4 text-center text-xs text-zinc-400 bg-[#FAF9F5] rounded-xl border border-[#ECE9DF]">No birds dispatched yet.</div>`;
+        } else {
+          const map = new Map();
+          sortedSales.forEach(s => {
+            const name = (s.customer || 'Unknown').trim();
+            const prev = map.get(name) || { customer: name, entries: 0, pieces: 0 };
+            prev.entries += 1;
+            prev.pieces += Number(s.pieces) || 0;
+            map.set(name, prev);
+          });
+          const grouped = Array.from(map.values()).sort((a, b) => b.pieces - a.pieces);
+          summaryEl.innerHTML = grouped.map(g => `
+            <div class="p-3 rounded-xl bg-[#FAF9F5] border border-[#E7E3D7] flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-zinc-900 truncate">${escapeHtml(g.customer)}</p>
+                <p class="text-[10px] text-zinc-400">${g.entries} ${g.entries === 1 ? 'entry' : 'entries'}</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-white border border-[#E2DDD0] text-xs font-extrabold text-[#006BA6] tabular-nums whitespace-nowrap">${g.pieces.toLocaleString()} pcs</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      if (entriesBody) {
+        if (sortedSales.length === 0) {
+          entriesBody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-xs text-zinc-400">No dispatch entries found.</td></tr>`;
+        } else {
+          entriesBody.innerHTML = sortedSales.map(item => `
+            <tr class="hover:bg-[#FAF9F5] transition">
+              <td class="py-2.5 px-3 text-zinc-500 whitespace-nowrap">${formatDisplayDate(item.date)}</td>
+              <td class="py-2.5 px-3">
+                <span class="font-bold text-zinc-900">${escapeHtml(item.customer)}</span>
+                ${item.note ? `<span class="block text-[10px] text-zinc-400">${escapeHtml(item.note)}</span>` : ''}
+              </td>
+              <td class="py-2.5 px-3 text-[11px] font-semibold text-[#164A28]">${escapeHtml(resolveSaleBatchName(item))}</td>
+              <td class="py-2.5 px-3 text-right font-extrabold text-[#006BA6] tabular-nums whitespace-nowrap">${Number(item.pieces).toLocaleString()} pcs</td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeDispatchedModal() {
+      const modal = document.getElementById('dispatchedModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function setKhataFilter(filterType) {
+      khataFilter = filterType;
+      const buttons = {
+        all: document.getElementById('khataFilterAll'),
+        today: document.getElementById('khataFilterToday'),
+        month: document.getElementById('khataFilterMonth')
+      };
+
+      Object.keys(buttons).forEach(key => {
+        const btn = buttons[key];
+        if (!btn) return;
+        if (key === filterType) {
+          btn.className = 'min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-bold bg-[#164A28] text-white shadow-2xs transition';
+        } else {
+          btn.className = 'min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-zinc-600 border border-[#E2DDD0] hover:bg-[#FAF9F5] transition';
+        }
+      });
+
+      renderKhataTable();
+    }
+
+    function renderKhataTable() {
+      const tbody = document.getElementById('khataTableBody');
+      const subEl = document.getElementById('khataSummarySubtitle');
+      const searchVal = (document.getElementById('khataSearchInput')?.value || '').trim().toLowerCase();
+      if (!tbody) return;
+
+      const todayStr = getTodayISO();
+      const monthPrefix = todayStr.slice(0, 7);
+
+      const filtered = salesRecords.filter(item => {
+        if (khataFilter === 'today' && item.date !== todayStr) return false;
+        if (khataFilter === 'month' && !(item.date || '').startsWith(monthPrefix)) return false;
+        if (searchVal) {
+          const hay = `${item.customer || ''} ${resolveSaleBatchName(item)} ${item.note || ''}`.toLowerCase();
+          if (!hay.includes(searchVal)) return false;
+        }
+        return true;
+      });
+
+      const totalPcs = filtered.reduce((sum, s) => sum + (Number(s.pieces) || 0), 0);
+      if (subEl) {
+        subEl.textContent = `${filtered.length} entries • ${totalPcs.toLocaleString()} pcs`;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-10 text-center text-xs text-zinc-400">No matching customer entries found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => `
+        <tr class="hover:bg-[#FAF9F5]/80 transition">
+          <td class="py-3.5 px-4 sm:px-6 text-zinc-500 whitespace-nowrap">${formatDisplayDate(item.date)}</td>
+          <td class="py-3.5 px-4">
+            <span class="font-bold text-zinc-900">${escapeHtml(item.customer)}</span>
+            ${item.note ? `<span class="block text-[11px] text-zinc-400">${escapeHtml(item.note)}</span>` : ''}
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7]">${escapeHtml(resolveSaleBatchName(item))}</span>
+          </td>
+          <td class="py-3.5 px-4 text-center font-extrabold text-zinc-900 tabular-nums">${Number(item.pieces).toLocaleString()}</td>
+          <td class="py-3.5 px-4 sm:px-6 text-right">
+            <button onclick="deleteSaleRecord('${escapeHtml(item.id)}')" title="Delete entry" class="p-1.5 text-zinc-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition inline-flex items-center justify-center">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function resetBatchForm() {
+      const nameEl = document.getElementById('batchNameInput');
+      const pcsEl = document.getElementById('batchPcsInput');
+      const dateEl = document.getElementById('batchDateInput');
+      const statusEl = document.getElementById('batchStatusInput');
+      const noteEl = document.getElementById('batchNoteInput');
+
+      if (nameEl) nameEl.value = '';
+      if (pcsEl) pcsEl.value = '';
+      if (dateEl) dateEl.value = getTodayISO();
+      if (statusEl) statusEl.value = 'Active';
+      if (noteEl) noteEl.value = '';
+    }
+
+    function handleSaveBatch(event) {
+      event.preventDefault();
+      const name = (document.getElementById('batchNameInput')?.value || '').trim();
+      const pieces = parseInt(document.getElementById('batchPcsInput')?.value || '0', 10);
+      const date = document.getElementById('batchDateInput')?.value || getTodayISO();
+      const status = document.getElementById('batchStatusInput')?.value || 'Active';
+      const note = (document.getElementById('batchNoteInput')?.value || '').trim();
+
+      if (!name || !pieces || pieces <= 0) {
+        showToast('Please enter batch name and bird count.', true);
         return;
       }
 
       const newBatch = {
-        id: 'batch-' + Date.now().toString(36),
+        id: 'batch-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
         name,
         pieces,
         date,
@@ -1181,551 +1672,400 @@
       };
 
       batchRecords.unshift(newBatch);
-      persistLocal();
-      if (window.cloudBridge) window.cloudBridge.saveBatch(newBatch);
-      refreshAllViews();
+      persistLocalData();
+      renderAll();
       resetBatchForm();
-      showToast(`Saved batch "${name}" (${pieces} pcs)!`);
-    }
+      showToast(`Added batch "${name}" (${pieces} pcs)`);
 
-    function resetBatchForm() {
-      document.getElementById('addBatchForm').reset();
-      document.getElementById('batchDateInput').value = new Date().toISOString().split('T')[0];
+      if (window.cloudBridge && window.cloudBridge.saveBatch) {
+        window.cloudBridge.saveBatch(newBatch);
+      }
     }
 
     function updateBatchStatus(id, newStatus) {
-      const idx = batchRecords.findIndex(b => b.id === id);
-      if (idx !== -1) {
-        batchRecords[idx].status = newStatus;
-        persistLocal();
-        if (window.cloudBridge) window.cloudBridge.saveBatch(batchRecords[idx]);
-        refreshAllViews();
-        showToast(`Batch status updated to ${newStatus}.`);
+      const batch = batchRecords.find(b => b.id === id);
+      if (!batch) return;
+      if (newStatus === 'Closed' && batch.status !== 'Closed') {
+        const { remainingLiveStock } = getStockTotals();
+        batch.closedAtStock = remainingLiveStock;
+        batch.closedDate = getTodayISO();
+      } else if (newStatus !== 'Closed') {
+        delete batch.closedAtStock;
+        delete batch.closedDate;
+      }
+      batch.status = newStatus;
+      persistLocalData();
+      renderAll();
+      showToast(
+        newStatus === 'Closed'
+          ? `Closed batch at ${batch.closedAtStock.toLocaleString()} pcs (${formatDisplayDate(batch.closedDate)})`
+          : `Updated batch status to ${newStatus}`
+      );
+
+      if (window.cloudBridge && window.cloudBridge.saveBatch) {
+        window.cloudBridge.saveBatch(batch);
       }
     }
 
     function deleteBatchRecord(id) {
+      const target = batchRecords.find(b => b.id === id);
+      if (!target) return;
       batchRecords = batchRecords.filter(b => b.id !== id);
-      persistLocal();
-      if (window.cloudBridge) window.cloudBridge.deleteBatch(id);
-      refreshAllViews();
-      showToast('Stock batch deleted.');
-    }
+      persistLocalData();
+      renderAll();
+      showToast(`Removed batch "${target.name}"`);
 
-    function refreshAllViews() {
-      renderDashboardView();
-      renderKhataTable();
-      renderInventoryView();
-      generateMonthlyReport();
-      renderCustomerDatalist();
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function renderDashboardView() {
-      let totalSoldPcs = 0;
-      salesRecords.forEach(s => {
-        totalSoldPcs += Number(s.pieces || 0);
-      });
-
-      const activeBatches = batchRecords.filter(b => b.status === 'Active');
-      const totalBatchStock = activeBatches.reduce((sum, b) => sum + Number(b.pieces || 0), 0);
-
-      document.getElementById('dashBirdsSold').textContent = totalSoldPcs.toLocaleString('en-IN');
-      document.getElementById('dashLiveStockInline').textContent = `${totalBatchStock.toLocaleString('en-IN')} pcs`;
-
-      const listEl = document.getElementById('recentSalesList');
-      listEl.innerHTML = '';
-      const recents = salesRecords.slice(0, 5);
-
-      if (recents.length === 0) {
-        listEl.innerHTML = `<div class="py-10 text-center text-xs text-zinc-400">No sales recorded yet. Use the form to add your first entry.</div>`;
-      } else {
-        recents.forEach(s => {
-          const row = document.createElement('div');
-          row.className = "py-3.5 flex items-center justify-between gap-3 group";
-          row.innerHTML = `
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-xl bg-[#EAF5EE] text-[#164A28] font-bold text-xs flex items-center justify-center flex-shrink-0">
-                ${escapeHtml(getInitials(s.customer))}
-              </div>
-              <div class="min-w-0">
-                <div class="text-sm font-bold text-zinc-900 truncate">${escapeHtml(s.customer)}</div>
-                <div class="text-xs text-zinc-400 mt-0.5">${formatDisplayDate(s.date)}${s.note ? ` · ${escapeHtml(s.note)}` : ''}</div>
-              </div>
-            </div>
-            <div class="text-right flex-shrink-0">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#F6F4EC] text-[#164A28] font-extrabold text-xs sm:text-sm tabular-nums">
-                ${Number(s.pieces || 0).toLocaleString('en-IN')} pcs
-              </span>
-            </div>
-          `;
-          listEl.appendChild(row);
-        });
+      if (window.cloudBridge && window.cloudBridge.deleteBatch) {
+        window.cloudBridge.deleteBatch(id);
       }
     }
 
-    function setKhataFilter(filter) {
-      currentKhataFilter = filter;
-      const map = {
-        all: 'khataFilterAll',
-        today: 'khataFilterToday',
-        month: 'khataFilterMonth'
-      };
-      Object.keys(map).forEach(k => {
-        const btn = document.getElementById(map[k]);
-        if (!btn) return;
-        btn.className = (k === filter)
-          ? "min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-bold bg-[#164A28] text-white shadow-2xs transition"
-          : "min-h-[38px] px-4 py-1.5 rounded-xl text-xs font-semibold bg-white text-zinc-600 border border-[#E2DDD0] hover:bg-[#FAF9F5] transition";
-      });
-      renderKhataTable();
-    }
+    function renderInventory() {
+      const { totalDispatchedPcs, remainingLiveStock, activeBatchLabel } = getStockTotals();
+      const activeBatches = batchRecords.filter(b => b.status === 'Active').length;
 
-    function renderKhataTable() {
-      const tbody = document.getElementById('khataTableBody');
-      const subtitle = document.getElementById('khataSummarySubtitle');
-      const query = (document.getElementById('khataSearchInput')?.value || '').toLowerCase().trim();
-      if (!tbody) return;
-
-      const todayStr = new Date().toISOString().split('T')[0];
-      const monthPrefix = todayStr.slice(0, 7);
-
-      const filtered = salesRecords.filter(s => {
-        if (currentKhataFilter === 'today' && s.date !== todayStr) return false;
-        if (currentKhataFilter === 'month' && !s.date.startsWith(monthPrefix)) return false;
-
-        if (query) {
-          const matchCust = (s.customer || '').toLowerCase().includes(query);
-          const matchNote = (s.note || '').toLowerCase().includes(query);
-          if (!matchCust && !matchNote) return false;
-        }
-        return true;
-      });
-
-      const totalPcs = filtered.reduce((sum, s) => sum + Number(s.pieces || 0), 0);
-
-      if (subtitle) {
-        subtitle.textContent = `${filtered.length} entries • ${totalPcs.toLocaleString('en-IN')} pcs`;
-      }
-
-      tbody.innerHTML = '';
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="py-12 text-center text-xs text-zinc-400">No matching customer ledger entries found.</td></tr>`;
-        return;
-      }
-
-      filtered.forEach(s => {
-        const pcs = Number(s.pieces || 0);
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-[#FAF9F5] transition";
-        tr.innerHTML = `
-          <td class="py-3.5 px-4 sm:px-6 text-zinc-500 whitespace-nowrap">${formatDisplayDate(s.date)}</td>
-          <td class="py-3.5 px-4 font-bold text-zinc-900">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-lg bg-[#EAF5EE] text-[#164A28] font-bold text-[10px] inline-flex items-center justify-center flex-shrink-0">${escapeHtml(getInitials(s.customer))}</span>
-              <div>
-                <span>${escapeHtml(s.customer)}</span>
-                ${s.note ? `<span class="block text-[11px] font-normal text-zinc-400">${escapeHtml(s.note)}</span>` : ''}
-              </div>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-center whitespace-nowrap">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#EAF5EE] text-[#164A28] font-extrabold text-xs tabular-nums">${pcs.toLocaleString('en-IN')}</span>
-          </td>
-          <td class="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">
-            <button onclick="deleteSaleRecord('${s.id}')" title="Delete Entry" class="p-2 text-zinc-300 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderInventoryView() {
-      const totalSoldPcs = salesRecords.reduce((sum, s) => sum + Number(s.pieces || 0), 0);
-      const activeBatches = batchRecords.filter(b => b.status === 'Active');
-      const currentStock = activeBatches.reduce((sum, b) => sum + Number(b.pieces || 0), 0);
-
-      document.getElementById('invCurrentStock').textContent = currentStock.toLocaleString('en-IN');
-      document.getElementById('invActiveBatches').textContent = activeBatches.length.toLocaleString('en-IN');
-      document.getElementById('invTotalBatches').textContent = batchRecords.length.toLocaleString('en-IN');
-      document.getElementById('invSoldPcs').textContent = totalSoldPcs.toLocaleString('en-IN');
-      document.getElementById('stockBatchesCountText').textContent = `${batchRecords.length} batch(es) recorded`;
-
+      const stockEl = document.getElementById('invCurrentStock');
+      const invBatchNameEl = document.getElementById('invActiveBatchName');
+      const activeEl = document.getElementById('invActiveBatches');
+      const totalEl = document.getElementById('invTotalBatches');
+      const soldEl = document.getElementById('invSoldPcs');
+      const countTextEl = document.getElementById('stockBatchesCountText');
       const tbody = document.getElementById('stockBatchesTableBody');
-      tbody.innerHTML = '';
+
+      if (stockEl) stockEl.textContent = remainingLiveStock.toLocaleString();
+      if (invBatchNameEl) invBatchNameEl.textContent = activeBatchLabel;
+      if (activeEl) activeEl.textContent = activeBatches.toLocaleString();
+      if (totalEl) totalEl.textContent = batchRecords.length.toLocaleString();
+      if (soldEl) soldEl.textContent = totalDispatchedPcs.toLocaleString();
+      if (countTextEl) countTextEl.textContent = `${batchRecords.length} batch(es) recorded`;
+
+      if (!tbody) return;
 
       if (batchRecords.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-xs text-zinc-400">No stock batches recorded yet.</td></tr>`;
         return;
       }
 
-      batchRecords.forEach(b => {
-        const isActive = b.status === 'Active';
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-[#FAF9F5] transition";
-        tr.innerHTML = `
-          <td class="py-3.5 pr-4 font-extrabold text-zinc-900 uppercase">${escapeHtml(b.name)}</td>
-          <td class="py-3.5 px-4 font-bold text-zinc-800 whitespace-nowrap tabular-nums">${Number(b.pieces || 0).toLocaleString('en-IN')}</td>
+      tbody.innerHTML = batchRecords.map(b => `
+        <tr class="hover:bg-[#FAF9F5]/80 transition">
+          <td class="py-3.5 pr-4">
+            <span class="font-bold text-zinc-900 block">${escapeHtml(b.name)}</span>
+            ${b.status === 'Closed' && b.closedAtStock !== undefined
+              ? `<span class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">Closed at ${Number(b.closedAtStock).toLocaleString()} pcs${b.closedDate ? ' • ' + formatDisplayDate(b.closedDate) : ''}</span>`
+              : ''}
+          </td>
+          <td class="py-3.5 px-4 font-extrabold text-zinc-900 tabular-nums">${Number(b.pieces).toLocaleString()}</td>
           <td class="py-3.5 px-4 text-zinc-500 whitespace-nowrap">${formatDisplayDate(b.date)}</td>
           <td class="py-3.5 px-4 text-zinc-400">${b.note ? escapeHtml(b.note) : '—'}</td>
-          <td class="py-3.5 px-4 whitespace-nowrap">
-            <select onchange="updateBatchStatus('${b.id}', this.value)" class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer ${isActive ? 'bg-emerald-50 text-[#1B7A43] border-emerald-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200'}">
+          <td class="py-3.5 px-4">
+            <select onchange="updateBatchStatus('${escapeHtml(b.id)}', this.value)" class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${b.status === 'Active' ? 'bg-[#EAF5EE] text-[#164A28] border-[#CFE8D7]' : b.status === 'Closed' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200'} outline-none">
               <option value="Active" ${b.status === 'Active' ? 'selected' : ''}>ACTIVE</option>
               <option value="Sold Out" ${b.status === 'Sold Out' ? 'selected' : ''}>SOLD OUT</option>
               <option value="Closed" ${b.status === 'Closed' ? 'selected' : ''}>CLOSED</option>
             </select>
           </td>
-          <td class="py-3.5 pl-4 text-right whitespace-nowrap">
-            <button onclick="deleteBatchRecord('${b.id}')" title="Delete Batch" class="p-2 text-zinc-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition">
+          <td class="py-3.5 pl-4 text-right">
+            <button onclick="deleteBatchRecord('${escapeHtml(b.id)}')" title="Delete batch" class="p-1.5 text-zinc-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition inline-flex items-center justify-center">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </td>
-        `;
-        tbody.appendChild(tr);
-      });
+        </tr>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
     }
 
     function generateMonthlyReport() {
-      const mSel = document.getElementById('statementMonthSelect');
-      const ySel = document.getElementById('statementYearSelect');
-      if (!mSel || !ySel) return;
+      const monthSelect = document.getElementById('statementMonthSelect');
+      const yearSelect = document.getElementById('statementYearSelect');
+      const monthIdx = parseInt(monthSelect?.value ?? '10', 10);
+      const yearVal = parseInt(yearSelect?.value ?? '2026', 10);
 
-      const selectedMonth = parseInt(mSel.value, 10);
-      const selectedYear = parseInt(ySel.value, 10);
       const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-      const periodStr = `${monthNames[selectedMonth]} ${selectedYear}`;
+      const periodLabel = `${monthNames[monthIdx] || 'November'} ${yearVal}`;
 
-      document.getElementById('statementPeriodTitle').textContent = periodStr;
-      document.getElementById('statementGenDate').textContent = formatDisplayDate(new Date().toISOString().split('T')[0]);
-
-      const monthSales = salesRecords.filter(s => {
-        const parts = (s.date || '').split('-');
-        if (parts.length !== 3) return false;
-        return (parseInt(parts[1], 10) - 1) === selectedMonth && parseInt(parts[0], 10) === selectedYear;
-      });
-
-      let totalPcs = 0;
-      const customerAgg = {};
-
-      monthSales.forEach(s => {
-        const pcs = Number(s.pieces || 0);
-        totalPcs += pcs;
-
-        const key = (s.customer || 'Unknown').trim();
-        if (!customerAgg[key]) {
-          customerAgg[key] = { entries: 0, pcs: 0 };
-        }
-        customerAgg[key].entries += 1;
-        customerAgg[key].pcs += pcs;
-      });
-
-      document.getElementById('pdfBirdsPcs').textContent = totalPcs.toLocaleString('en-IN');
-
-      const custBody = document.getElementById('pdfCustomerBreakdownBody');
-      custBody.innerHTML = '';
-      const custRows = Object.entries(customerAgg);
-
-      if (custRows.length === 0) {
-        custBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-zinc-400">No entries recorded for ${periodStr}.</td></tr>`;
-      } else {
-        custRows.forEach(([custName, stat]) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td class="py-2 px-2.5 font-bold text-zinc-900">${escapeHtml(custName)}</td>
-            <td class="py-2 px-2 text-center text-zinc-600 tabular-nums">${stat.entries}</td>
-            <td class="py-2 px-2.5 text-right font-bold text-[#1B7A43] tabular-nums">${stat.pcs.toLocaleString('en-IN')}</td>
-          `;
-          custBody.appendChild(tr);
-        });
-      }
-
+      const periodTitleEl = document.getElementById('statementPeriodTitle');
+      const genDateEl = document.getElementById('statementGenDate');
+      const birdsPcsEl = document.getElementById('pdfBirdsPcs');
+      const summaryBatchBadgesListEl = document.getElementById('pdfSummaryBatchBadgesList');
+      const batchBreakdownBody = document.getElementById('pdfBatchBreakdownBody');
+      const breakdownBody = document.getElementById('pdfCustomerBreakdownBody');
       const txBody = document.getElementById('pdfAllTransactionsBody');
-      txBody.innerHTML = '';
-      const chronologicalSales = [...monthSales].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
-      if (chronologicalSales.length === 0) {
-        txBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-zinc-400">No transactions found for ${periodStr}.</td></tr>`;
-      } else {
-        chronologicalSales.forEach(s => {
-          const pcs = Number(s.pieces || 0);
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td class="py-2 px-2 text-zinc-500 whitespace-nowrap">${formatDisplayDate(s.date)}</td>
-            <td class="py-2 px-2 font-bold text-zinc-900">${escapeHtml(s.customer)}</td>
-            <td class="py-2 px-2 text-right font-bold text-zinc-800 tabular-nums">${pcs.toLocaleString('en-IN')}</td>
+      if (periodTitleEl) periodTitleEl.textContent = periodLabel;
+      if (genDateEl) genDateEl.textContent = formatDisplayDate(getTodayISO());
+
+      const targetPrefix = `${yearVal}-${String(monthIdx + 1).padStart(2, '0')}`;
+      const monthlySales = salesRecords
+        .filter(s => (s.date || '').startsWith(targetPrefix))
+        .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+      const totalPcs = monthlySales.reduce((sum, s) => sum + (Number(s.pieces) || 0), 0);
+      if (birdsPcsEl) birdsPcsEl.textContent = totalPcs.toLocaleString();
+
+      const batchMap = new Map();
+      monthlySales.forEach(s => {
+        const bName = resolveSaleBatchName(s);
+        const prev = batchMap.get(bName) || { batch: bName, addedStock: 0, entries: 0, pieces: 0 };
+        prev.entries += 1;
+        prev.pieces += Number(s.pieces) || 0;
+        batchMap.set(bName, prev);
+      });
+
+      batchRecords.forEach(b => {
+        const bName = (b.name || '').trim();
+        if (!bName) return;
+        const isAddedInMonth = (b.date || '').startsWith(targetPrefix);
+        if (batchMap.has(bName) || isAddedInMonth) {
+          const prev = batchMap.get(bName) || { batch: bName, addedStock: 0, entries: 0, pieces: 0 };
+          prev.addedStock += Number(b.pieces) || 0;
+          batchMap.set(bName, prev);
+        }
+      });
+
+      const batchBreakdownList = Array.from(batchMap.values()).sort((a, b) => b.pieces - a.pieces || b.addedStock - a.addedStock);
+
+      if (summaryBatchBadgesListEl) {
+        if (batchBreakdownList.length > 0) {
+          summaryBatchBadgesListEl.innerHTML = batchBreakdownList.map(item => `
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7] tabular-nums">
+              BATCH / BREED: ${escapeHtml(item.batch)} (${item.pieces.toLocaleString()} pcs)
+            </span>
+          `).join('');
+        } else {
+          const { activeBatchLabel } = getStockTotals();
+          summaryBatchBadgesListEl.innerHTML = `
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#EAF5EE] text-[#164A28] border border-[#CFE8D7]">
+              BATCH / BREED: ${escapeHtml(activeBatchLabel)}
+            </span>
           `;
-          txBody.appendChild(tr);
-        });
+        }
+      }
+
+      if (batchBreakdownBody) {
+        if (batchBreakdownList.length === 0) {
+          batchBreakdownBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-zinc-400">No batch records for ${escapeHtml(periodLabel)}.</td></tr>`;
+        } else {
+          batchBreakdownBody.innerHTML = batchBreakdownList.map(row => `
+            <tr>
+              <td class="py-2 px-2.5 font-bold text-[#164A28]">${escapeHtml(row.batch)}</td>
+              <td class="py-2 px-2 text-right font-bold text-zinc-700 tabular-nums">${row.addedStock > 0 ? row.addedStock.toLocaleString() + ' pcs' : '—'}</td>
+              <td class="py-2 px-2 text-center text-zinc-600 tabular-nums">${row.entries}</td>
+              <td class="py-2 px-2.5 text-right font-extrabold text-zinc-900 tabular-nums">${row.pieces.toLocaleString()} pcs</td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      const customerMap = new Map();
+      monthlySales.forEach(s => {
+        const name = (s.customer || 'Unknown').trim();
+        const prev = customerMap.get(name) || { customer: name, entries: 0, pieces: 0 };
+        prev.entries += 1;
+        prev.pieces += Number(s.pieces) || 0;
+        customerMap.set(name, prev);
+      });
+
+      const breakdownList = Array.from(customerMap.values()).sort((a, b) => b.pieces - a.pieces);
+
+      if (breakdownBody) {
+        if (breakdownList.length === 0) {
+          breakdownBody.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-zinc-400">No entries recorded for ${escapeHtml(periodLabel)}.</td></tr>`;
+        } else {
+          breakdownBody.innerHTML = breakdownList.map(row => `
+            <tr>
+              <td class="py-2 px-2.5 font-bold text-zinc-900">${escapeHtml(row.customer)}</td>
+              <td class="py-2 px-2 text-center text-zinc-600 tabular-nums">${row.entries}</td>
+              <td class="py-2 px-2.5 text-right font-extrabold text-zinc-900 tabular-nums">${row.pieces.toLocaleString()}</td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      if (txBody) {
+        if (monthlySales.length === 0) {
+          txBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-zinc-400">No transactions in ${escapeHtml(periodLabel)}.</td></tr>`;
+        } else {
+          txBody.innerHTML = monthlySales.map(tx => `
+            <tr>
+              <td class="py-2 px-2 text-zinc-600 whitespace-nowrap">${formatDisplayDate(tx.date)}</td>
+              <td class="py-2 px-2 font-bold text-zinc-900">${escapeHtml(tx.customer)}</td>
+              <td class="py-2 px-2 font-semibold text-[#164A28]">${escapeHtml(resolveSaleBatchName(tx))}</td>
+              <td class="py-2 px-2 text-right font-extrabold text-zinc-900 tabular-nums">${Number(tx.pieces).toLocaleString()}</td>
+            </tr>
+          `).join('');
+        }
       }
     }
 
-    async function rasterizeImg(imgEl, fallbackDataUrl) {
-      return new Promise(resolve => {
-        try {
-          const src = imgEl?.getAttribute('src') || '';
-          if (src.startsWith('data:image/')) { resolve(src); return; }
-          const tmp = new Image();
-          tmp.crossOrigin = 'anonymous';
-          tmp.onload = function() {
-            try {
-              const c = document.createElement('canvas');
-              c.width = tmp.naturalWidth || 200;
-              c.height = tmp.naturalHeight || 200;
-              const ctx = c.getContext('2d');
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, c.width, c.height);
-              ctx.drawImage(tmp, 0, 0, c.width, c.height);
-              resolve(c.toDataURL('image/png'));
-            } catch (e) { resolve(fallbackDataUrl); }
-          };
-          tmp.onerror = () => resolve(fallbackDataUrl);
-          tmp.src = src || fallbackDataUrl;
-        } catch (e) { resolve(fallbackDataUrl); }
-      });
-    }
+    function downloadSettlementPDF() {
+      const element = document.getElementById('settlement-pdf-area');
+      const periodTitle = (document.getElementById('statementPeriodTitle')?.textContent || 'Monthly_Statement').replace(/\s+/g, '_');
+      if (!element || typeof html2pdf === 'undefined') {
+        window.print();
+        return;
+      }
 
-    async function downloadSettlementPDF() {
-      const btn = document.getElementById('downloadPdfBtn');
-      if (btn && btn.disabled) return;
-      generateMonthlyReport();
-
-      const sourceEl = document.getElementById('settlement-pdf-area');
-      const mSel = document.getElementById('statementMonthSelect');
-      const monthName = mSel.options[mSel.selectedIndex].text;
-      const year = document.getElementById('statementYearSelect').value;
-      const filename = `Patra_Farm_Monthly_Statement_${monthName}_${year}.pdf`;
-
-      if (btn) btn.disabled = true;
-      showToast('Generating Monthly Statement PDF...');
-
-      const prevX = window.scrollX || 0;
-      const prevY = window.scrollY || 0;
-
-      const logoUrl = await rasterizeImg(document.getElementById('pdfFarmLogo'), getEmbeddedLogoSvgDataUrl());
-      const sigUrl = await rasterizeImg(document.getElementById('pdfAuthorizedSignature'), getEmbeddedSignatureSvgDataUrl());
-
-      const host = document.createElement('div');
-      host.style.position = 'absolute';
-      host.style.left = '0';
-      host.style.top = '0';
-      host.style.width = '780px';
-      host.style.backgroundColor = '#ffffff';
-      host.style.zIndex = '99999';
-
-      const clone = sourceEl.cloneNode(true);
-      clone.style.width = '780px';
-      clone.style.maxWidth = '780px';
-      clone.style.minWidth = '780px';
-      clone.style.boxShadow = 'none';
-      clone.style.borderRadius = '0';
-      clone.style.margin = '0';
-      clone.style.padding = '36px 40px';
-
-      const cLogo = clone.querySelector('#pdfFarmLogo');
-      if (cLogo) { cLogo.onerror = null; cLogo.src = logoUrl; }
-      const cSig = clone.querySelector('#pdfAuthorizedSignature');
-      if (cSig) { cSig.onerror = null; cSig.src = sigUrl; }
-
-      host.appendChild(clone);
-      document.body.appendChild(host);
-      window.scrollTo(0, 0);
-      await new Promise(r => setTimeout(r, 120));
-
-      const fullH = Math.max(clone.scrollHeight, clone.offsetHeight, 1020);
+      showToast('Generating A4 PDF Statement...');
       const opt = {
         margin: [6, 6, 6, 6],
-        filename,
+        filename: `Patra_Farm_Monthly_Statement_${periodTitle}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          x: 0,
-          y: 0,
-          width: 780,
-          height: fullH,
-          windowWidth: 780,
-          windowHeight: fullH,
-          scrollX: 0,
-          scrollY: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      try {
-        if (typeof html2pdf !== 'undefined') {
-          await html2pdf().set(opt).from(clone).save();
-          showToast('Monthly Statement PDF downloaded!');
-        } else {
-          window.print();
-        }
-      } catch (err) {
-        showToast('PDF download failed. Please try again.', 'error');
-      } finally {
-        if (document.body.contains(host)) document.body.removeChild(host);
-        window.scrollTo(prevX, prevY);
-        if (btn) btn.disabled = false;
-      }
-    }
-
-    function renderCustomerDatalist() {
-      const dl = document.getElementById('customerSuggestions');
-      if (!dl) return;
-      dl.innerHTML = '';
-      const names = [...new Set(salesRecords.map(s => s.customer).filter(n => n && n !== 'Unknown'))];
-      names.forEach(n => {
-        const opt = document.createElement('option');
-        opt.value = n;
-        dl.appendChild(opt);
+      html2pdf().set(opt).from(element).save().then(() => {
+        showToast('Statement PDF downloaded!');
+      }).catch(() => {
+        window.print();
       });
-    }
-
-    function switchTab(tabId) {
-      const views = {
-        dashboard: 'viewDashboard',
-        khata: 'viewKhata',
-        inventory: 'viewInventory',
-        statement: 'viewStatement'
-      };
-      const dBtns = {
-        dashboard: 'tabDashboardBtn',
-        khata: 'tabKhataBtn',
-        inventory: 'tabInventoryBtn',
-        statement: 'tabStatementBtn'
-      };
-      const mBtns = {
-        dashboard: 'mobileTabDashboardBtn',
-        khata: 'mobileTabKhataBtn',
-        inventory: 'mobileTabInventoryBtn',
-        statement: 'mobileTabStatementBtn'
-      };
-
-      Object.keys(views).forEach(k => {
-        const v = document.getElementById(views[k]);
-        const d = document.getElementById(dBtns[k]);
-        const m = document.getElementById(mBtns[k]);
-        if (k === tabId) {
-          if (v) v.classList.remove('hidden');
-          if (d) d.className = "min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-[#164A28] shadow-xs flex items-center gap-2 transition";
-          if (m) m.className = "flex flex-col items-center justify-center gap-1 text-[#164A28] font-bold text-[11px]";
-        } else {
-          if (v) v.classList.add('hidden');
-          if (d) d.className = "min-h-[38px] px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:text-zinc-900 flex items-center gap-2 transition";
-          if (m) m.className = "flex flex-col items-center justify-center gap-1 text-zinc-500 font-medium text-[11px]";
-        }
-      });
-
-      if (tabId === 'statement') generateMonthlyReport();
-      if (tabId === 'khata') renderKhataTable();
-      if (tabId === 'inventory') renderInventoryView();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function focusNewEntry() {
-      switchTab('dashboard');
-      const input = document.getElementById('saleCustomerInput');
-      if (input) {
-        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        input.focus();
-      }
     }
 
     function openSettingsModal() {
-      const m = document.getElementById('settingsModal');
-      m.classList.remove('hidden');
-      m.classList.add('flex');
+      const modal = document.getElementById('settingsModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
     }
 
     function closeSettingsModal() {
-      const m = document.getElementById('settingsModal');
-      m.classList.add('hidden');
-      m.classList.remove('flex');
+      const modal = document.getElementById('settingsModal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function compressImageDataUrl(file, maxWidth, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          callback(canvas.toDataURL('image/png', 0.9));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleCustomLogoUpload(event) {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+      compressImageDataUrl(file, 260, (dataUrl) => {
+        safeSetStorage(LOGO_KEY, dataUrl);
+        applyBrandingAssets();
+        showToast('Farm logo updated and saved!');
+        if (window.cloudBridge && window.cloudBridge.saveBranding) {
+          window.cloudBridge.saveBranding(dataUrl, safeGetStorage(SIGNATURE_KEY) || '');
+        }
+      });
+    }
+
+    function resetToDefaultLogo() {
+      safeRemoveStorage(LOGO_KEY);
+      applyBrandingAssets();
+      showToast('Restored default Patra Farm logo.');
+      if (window.cloudBridge && window.cloudBridge.saveBranding) {
+        window.cloudBridge.saveBranding('', safeGetStorage(SIGNATURE_KEY) || '');
+      }
+    }
+
+    function handleCustomSignatureUpload(event) {
+      const file = event.target?.files?.[0];
+      if (!file) return;
+      compressImageDataUrl(file, 360, (dataUrl) => {
+        safeSetStorage(SIGNATURE_KEY, dataUrl);
+        applyBrandingAssets();
+        showToast('Authorized signature updated and saved!');
+        if (window.cloudBridge && window.cloudBridge.saveBranding) {
+          window.cloudBridge.saveBranding(safeGetStorage(LOGO_KEY) || '', dataUrl);
+        }
+      });
+    }
+
+    function resetToDefaultSignature() {
+      safeRemoveStorage(SIGNATURE_KEY);
+      applyBrandingAssets();
+      showToast('Restored default signature.');
+      if (window.cloudBridge && window.cloudBridge.saveBranding) {
+        window.cloudBridge.saveBranding(safeGetStorage(LOGO_KEY) || '', '');
+      }
     }
 
     function saveCurrentAsDefaultData() {
       safeSetStorage(DEFAULT_SALES_KEY, JSON.stringify(salesRecords));
       safeSetStorage(DEFAULT_BATCHES_KEY, JSON.stringify(batchRecords));
-      persistLocal();
+      showToast('Current data saved as default!');
       closeSettingsModal();
-      showToast('All current ledger & inventory data saved as default!');
     }
 
     function restoreSavedDefaultData() {
-      salesRecords = getDefaultSales();
-      batchRecords = getDefaultBatches();
-      persistLocal();
-      refreshAllViews();
+      salesRecords = getSavedDefaultSales();
+      batchRecords = getSavedDefaultBatches();
+      persistLocalData();
+      renderAll();
+      showToast('Restored saved default data.');
       closeSettingsModal();
-      showToast('Saved default data restored!');
     }
 
     function clearAllRecords() {
       salesRecords = [];
       batchRecords = [];
-      persistLocal();
-      refreshAllViews();
-      closeSettingsModal();
+      persistLocalData();
+      renderAll();
       showToast('All records cleared.');
+      closeSettingsModal();
     }
 
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toastNotification');
-      const msg = document.getElementById('toastMessage');
-      const icon = document.getElementById('toastIcon');
-      if (!toast || !msg || !icon) return;
+    function renderCustomerSuggestions() {
+      const dl = document.getElementById('customerSuggestions');
+      if (!dl) return;
+      const names = Array.from(new Set(salesRecords.map(s => (s.customer || '').trim()).filter(Boolean)));
+      dl.innerHTML = names.map(name => `<option value="${escapeHtml(name)}">`).join('');
+    }
 
-      msg.textContent = message;
-      icon.innerHTML = type === 'error'
-        ? '<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>'
-        : '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+    function renderAll() {
+      renderBatchSelectorOptions();
+      renderDashboard();
+      renderKhataTable();
+      renderInventory();
+      generateMonthlyReport();
+      renderCustomerSuggestions();
       if (window.lucide) lucide.createIcons();
-
-      toast.classList.remove('translate-y-[-140%]', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-[-140%]', 'opacity-0');
-      }, 3000);
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    window.addEventListener('DOMContentLoaded', function() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const sDate = document.getElementById('saleDateInput');
-      const bDate = document.getElementById('batchDateInput');
-      if (sDate) sDate.value = todayStr;
-      if (bDate) bDate.value = todayStr;
-
-      const dDisp = document.getElementById('currentDateDisplay');
-      if (dDisp) {
-        dDisp.textContent = new Date().toLocaleDateString('en-GB', {
-          weekday: 'short',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateDisp = document.getElementById('currentDateDisplay');
+      if (dateDisp) {
+        const now = new Date();
+        dateDisp.textContent = now.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
       }
 
-      const now = new Date();
-      const mSel = document.getElementById('statementMonthSelect');
-      const ySel = document.getElementById('statementYearSelect');
-      if (mSel) mSel.value = now.getMonth();
-      if (ySel) ySel.value = now.getFullYear();
+      const saleDateInput = document.getElementById('saleDateInput');
+      if (saleDateInput && !saleDateInput.value) {
+        saleDateInput.value = getTodayISO();
+      }
 
+      const batchDateInput = document.getElementById('batchDateInput');
+      if (batchDateInput && !batchDateInput.value) {
+        batchDateInput.value = getTodayISO();
+      }
+
+      loadInitialData();
       applyBrandingAssets();
-      refreshAllViews();
+      renderAll();
     });
   </script>
 </body>
